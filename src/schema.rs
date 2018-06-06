@@ -1,4 +1,4 @@
-use models::PolicyEnumMapping;
+use tlspolicy::PolicyEnumMapping;
 
 table! {
     accounts (id) {

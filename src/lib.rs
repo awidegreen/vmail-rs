@@ -3,15 +3,22 @@ extern crate diesel;
 #[macro_use]
 extern crate diesel_derive_enum;
 extern crate dotenv;
+#[macro_use] extern crate failure;
+#[macro_use] extern crate failure_derive;
 
 use diesel::prelude::*;
 use diesel::mysql::MysqlConnection;
 use dotenv::dotenv;
 use std::env;
-use models::{Account, Domain};
+
+pub mod error;
 
 pub mod schema;
-pub mod models;
+pub mod account;
+pub mod domain;
+pub mod alias;
+pub mod tlspolicy;
+
 
 pub fn establish_connection() -> MysqlConnection {
     dotenv().ok();
@@ -20,34 +27,4 @@ pub fn establish_connection() -> MysqlConnection {
 
     MysqlConnection::establish(&database_url)
         .expect(&format!("Error connecting to {}", database_url))
-}
-
-pub fn accounts() -> Vec<Account> {
-    use schema::accounts::dsl::*;
-
-    let conn = establish_connection();
-
-    accounts
-        .load::<Account>(&conn)
-        .expect("Error loading accounts")
-}
-pub fn accounts_with_domain(domain_name: &str) -> Vec<Account> {
-    use schema::accounts::dsl::*;
-
-    let conn = establish_connection();
-
-    accounts
-        .filter(domain.eq(domain_name))
-        .load::<Account>(&conn)
-        .expect("Error loading accounts")
-}
-
-pub fn domains() -> Vec<Domain> {
-    use schema::domains::dsl::*;
-
-    let conn = establish_connection();
-
-    domains
-        .load::<Domain>(&conn)
-        .expect("Error loading domains")
 }
