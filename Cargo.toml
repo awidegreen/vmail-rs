@@ -1,11 +1,6 @@
-[package]
-name = "vmail-rs"
-version = "0.1.0"
-authors = ["Armin Widegreen <armin.widegreen@gmail.com>"]
+[workspace]
 
-[dependencies]
-diesel = { version = "1.2.0", features = ["mysql"] }
-diesel-derive-enum = { version = "0.4", features = ["mysql"] }
-dotenv = "0.10.0"
-failure = "0.1"
-failure_derive = "0.1"
+members = [
+  "vmail-lib",
+  "vmail-cli",
+]

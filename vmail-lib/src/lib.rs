@@ -3,22 +3,23 @@ extern crate diesel;
 #[macro_use]
 extern crate diesel_derive_enum;
 extern crate dotenv;
-#[macro_use] extern crate failure;
-#[macro_use] extern crate failure_derive;
+#[macro_use]
+extern crate failure;
+#[macro_use]
+extern crate failure_derive;
 
-use diesel::prelude::*;
 use diesel::mysql::MysqlConnection;
+use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
 
-pub mod error;
+pub mod result;
 
-pub mod schema;
 pub mod account;
-pub mod domain;
 pub mod alias;
+pub mod domain;
+pub mod schema;
 pub mod tlspolicy;
-
 
 pub fn establish_connection() -> MysqlConnection {
     dotenv().ok();
