@@ -7,7 +7,7 @@ extern crate failure;
 #[macro_use]
 extern crate failure_derive;
 extern crate rand;
-extern crate sha2;
+extern crate sha_crypt;
 
 use std::process;
 

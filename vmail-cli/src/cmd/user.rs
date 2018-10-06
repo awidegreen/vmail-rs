@@ -12,10 +12,14 @@ use utils;
 
 fn query_for_password() -> Option<String> {
     let pass = rpassword::prompt_password_stdout("Password: ").unwrap();
+    if pass.is_empty() {
+        eprintln!("Sorry, empty passwords are not allowed!");
+        return None;
+    }
     let pass_confirm = rpassword::prompt_password_stdout("Confirm Password: ").unwrap();
 
     if pass != pass_confirm {
-        eprintln!("Sorry, passwords do not match unable to proceed.");
+        eprintln!("Sorry, passwords do not match, unable to proceed!");
         return None;
     }
 
@@ -49,7 +53,7 @@ fn add(matches: &ArgMatches) -> Result<()> {
     let enabled = !matches.is_present("disabled");
     let sendonly = matches.is_present("sendonly");
     let username = matches.value_of("USER").unwrap();
-    let domain = matches.value_of("DOMAIN").unwrap_or("");
+    let domain = matches.value_of("DOMAIN").unwrap();
     let quota = value_t!(matches.value_of("quota"), i32).unwrap_or_else(|e| {
         eprintln!("Argument 'quota' has to be >= 0");
         e.exit()
@@ -66,8 +70,7 @@ fn add(matches: &ArgMatches) -> Result<()> {
     }
 
     let pass = query_for_password().unwrap_or_else(|| process::exit(1));
-
-    let pass = hash(PasswordScheme::SHA512_CRYPT, pass).unwrap();
+    let pass = hash(PasswordScheme::Sha512Crypt, pass).unwrap();
 
     let a = NewAccount {
         username: username,
@@ -80,7 +83,6 @@ fn add(matches: &ArgMatches) -> Result<()> {
 
     Account::create(&conn, a)?;
 
-    // TODO add user if it doesn't exists
     println!("User account '{}@{}' has been added!", username, domain);
 
     Ok(())
@@ -129,17 +131,56 @@ fn remove(matches: &ArgMatches) -> Result<()> {
 
 fn password(matches: &ArgMatches) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
-    println!("Set password for '{}'", username);
-    let pass = query_for_password().unwrap_or_else(|| process::exit(1));
+    let domain = matches.value_of("DOMAIN").unwrap();
 
-    println!("Password for user account '{}' has been changed!", username);
+    let conn = vmail_lib::establish_connection();
+    let mut acc = Account::get(&conn, username, domain)?;
+
+    let user = format!("{}@{}", username, domain);
+    println!("Set password for '{}'", user);
+    let pass = query_for_password().unwrap_or_else(|| process::exit(1));
+    let pass = hash(PasswordScheme::Sha512Crypt, pass).unwrap();
+
+    acc.password = pass;
+    Account::save(&conn, &acc)?;
+
+    println!("Password has been changed!");
     Ok(())
 }
 
 fn edit(matches: &ArgMatches) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
+    let domain = matches.value_of("DOMAIN").unwrap();
 
-    Err(format_err!("Edit not implemented, sorry!"))
+    let conn = vmail_lib::establish_connection();
+    let mut acc = Account::get(&conn, username, domain)?;
+
+    if matches.is_present("enable") {
+        acc.enabled = Some(true);
+    }
+    if matches.is_present("disable") {
+        acc.enabled = Some(false);
+    }
+    if matches.is_present("sendonly") {
+        acc.sendonly = Some(true);
+    }
+    if matches.is_present("sendreceive") {
+        acc.sendonly = Some(false);
+    }
+
+    if matches.is_present("quota") {
+        let quota = value_t!(matches.value_of("quota"), i32).unwrap_or_else(|e| {
+            eprintln!("Argument 'quota' has to be >= 0");
+            e.exit()
+        });
+        acc.quota = Some(quota);
+    }
+
+    Account::save(&conn, &acc)?;
+
+    println!("Password has been updated!");
+
+    Ok(())
 }
 
 pub fn dispatch(matches: &ArgMatches) -> Result<()> {

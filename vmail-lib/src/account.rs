@@ -7,7 +7,7 @@ use std::fmt;
 
 use result::{Result, VmailError};
 
-#[derive(Queryable, PartialEq, Debug)]
+#[derive(Identifiable, AsChangeset, Queryable, PartialEq, Debug)]
 pub struct Account {
     pub id: i32,
     pub username: String,
@@ -146,5 +146,10 @@ impl Account {
         } else {
             false
         }
+    }
+
+    pub fn save(conn: &MysqlConnection, account: &Account) -> Result<usize> {
+        let n = diesel::update(account).set(account).execute(conn)?;
+        Ok(n)
     }
 }
