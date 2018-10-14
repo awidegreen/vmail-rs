@@ -9,10 +9,13 @@ from [Thomas Leister](https://thomas-leister.de) written in Rust.
 ## Prerequisites
 
 Make sure you have a working setup as described in the tutorial as `vmail-rs`
-relies on the described database scheme (MySQL or MariaDB).
+relies on the described database scheme (MySQL or MariaDB). That also includes
+that `libmysqlclient-dev` on ubuntu or the counter-part for other
+distributions is installed.
 
 Further, as `vmail-rs` is written in Rust, you should have a working
 rustup/cargo setup.
+
 
 # Installation
 
@@ -44,7 +47,8 @@ vmail-rs uses Rust's [dotenv](https://docs.rs/crate/dotenv/) crate to create
 environment configuration from a `.env` file.
 
 Create a `.env` in the current directory containing the `DATABASE_URL`
-configuration parameter.
+configuration parameter (be aware of the URI character encoding for the
+password).
 
 ```
 DATABASE_URL=mysql://vmail:vmailpassword@localhost
