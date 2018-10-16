@@ -1,3 +1,5 @@
+#![allow(proc_macro_derive_resolution_fallback)]
+
 use account::Account;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
@@ -124,7 +126,7 @@ impl Alias {
             .filter(source_domain.eq(&account.domain))
             .load::<Alias>(conn)?;
 
-        if r.len() != 0 {
+        if !r.is_empty() {
             return Ok(r);
         }
 
@@ -142,7 +144,7 @@ impl Alias {
             .filter(destination_domain.eq(&account.domain))
             .load::<Alias>(conn)?;
 
-        if r.len() != 0 {
+        if !r.is_empty() {
             return Ok(r);
         }
 
@@ -152,7 +154,7 @@ impl Alias {
         )));
     }
 
-    pub fn delete(conn: &MysqlConnection, alias: Alias) -> Result<usize> {
+    pub fn delete(conn: &MysqlConnection, alias: &Alias) -> Result<usize> {
         use diesel::delete;
         use schema::aliases::dsl::*;
 

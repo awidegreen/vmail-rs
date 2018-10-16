@@ -1,3 +1,4 @@
+#![allow(proc_macro_derive_resolution_fallback)]
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
 use schema::domains;
@@ -65,7 +66,7 @@ impl Domain {
     }
 
     /// returns number of rows deleted
-    pub fn delete(conn: &MysqlConnection, d: Domain) -> Result<usize> {
+    pub fn delete(conn: &MysqlConnection, d: &Domain) -> Result<usize> {
         use diesel::delete;
         use schema::domains::dsl::*;
 

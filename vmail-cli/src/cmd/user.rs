@@ -23,7 +23,7 @@ fn query_for_password() -> Option<String> {
         return None;
     }
 
-    return Some(pass);
+    Some(pass)
 }
 
 fn show(matches: &ArgMatches) -> Result<()> {
@@ -70,11 +70,11 @@ fn add(matches: &ArgMatches) -> Result<()> {
     }
 
     let pass = query_for_password().unwrap_or_else(|| process::exit(1));
-    let pass = hash(PasswordScheme::Sha512Crypt, pass).unwrap();
+    let pass = hash(&PasswordScheme::Sha512Crypt, &pass).unwrap();
 
     let a = NewAccount {
-        username: username,
-        domain: domain,
+        username,
+        domain,
         password: &pass,
         quota: Some(quota),
         enabled: Some(enabled),
@@ -115,11 +115,11 @@ fn remove(matches: &ArgMatches) -> Result<()> {
             if verbose {
                 println!("Delete alias: {}", alias);
             }
-            Alias::delete(&conn, alias)?;
+            Alias::delete(&conn, &alias)?;
         }
     }
 
-    Account::delete(&conn, acc)?;
+    Account::delete(&conn, &acc)?;
 
     println!(
         "User account '{}@{}' and all its aliases has been removed!",
@@ -139,7 +139,7 @@ fn password(matches: &ArgMatches) -> Result<()> {
     let user = format!("{}@{}", username, domain);
     println!("Set password for '{}'", user);
     let pass = query_for_password().unwrap_or_else(|| process::exit(1));
-    let pass = hash(PasswordScheme::Sha512Crypt, pass).unwrap();
+    let pass = hash(&PasswordScheme::Sha512Crypt, &pass).unwrap();
 
     acc.password = pass;
     Account::save(&conn, &acc)?;

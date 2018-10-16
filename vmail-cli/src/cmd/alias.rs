@@ -57,7 +57,7 @@ fn remove(matches: &ArgMatches) -> Result<()> {
 
     let conn = establish_connection();
     let alias = Alias::get(&conn, user, domain)?;
-    Alias::delete(&conn, alias)?;
+    Alias::delete(&conn, &alias)?;
 
     println!("Alias '{}@{}' has been deleted!", user, domain);
 

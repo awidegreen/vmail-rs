@@ -87,18 +87,19 @@ fn remove(matches: &ArgMatches) -> Result<()> {
                 if verbose {
                     println!("  Delete alias: {}", alias);
                 }
-                Alias::delete(&conn, alias)?;
+                Alias::delete(&conn, &alias)?;
             }
-            Account::delete(&conn, acc)?;
+            Account::delete(&conn, &acc)?;
         }
     }
-    Domain::delete(&conn, domain)?;
+    Domain::delete(&conn, &domain)?;
 
     println!(
         "Domain '{}' and all its user accounts has been removed!",
         domain_s
     );
-    return Ok(());
+
+    Ok(())
 }
 
 pub fn dispatch(matches: &ArgMatches) -> Result<()> {

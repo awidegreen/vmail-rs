@@ -7,12 +7,12 @@ pub enum PasswordScheme {
     // be alright
 }
 
-pub fn hash(scheme: PasswordScheme, value: String) -> Result<String, CryptError> {
+pub fn hash(scheme: &PasswordScheme, value: &str) -> Result<String, CryptError> {
     match scheme {
         PasswordScheme::Sha512Crypt => {
             let params = Sha512Params::default();
             let mut pass = "{SHA512-CRYPT}".to_string();
-            pass += &sha512_simple(&value, &params)?;
+            pass += &sha512_simple(value, &params)?;
             Ok(pass)
         }
     }

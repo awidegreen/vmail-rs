@@ -1,3 +1,4 @@
+#![allow(proc_macro_derive_resolution_fallback)]
 use diesel;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
@@ -82,7 +83,7 @@ impl Account {
             .limit(1)
             .load::<Account>(conn)?;
 
-        if r.len() != 0 {
+        if !r.is_empty() {
             return Ok(r);
         }
 
@@ -97,7 +98,7 @@ impl Account {
             .limit(1)
             .load::<Account>(conn)?;
 
-        if r.len() != 0 {
+        if !r.is_empty() {
             return Ok(r);
         }
 
@@ -118,13 +119,13 @@ impl Account {
         use schema::accounts;
 
         let n = diesel::insert_into(accounts::table)
-            .values(&account)
+            .values(account)
             .execute(conn)?;
         Ok(n)
     }
 
     /// returns number of rows deleted
-    pub fn delete(conn: &MysqlConnection, account: Account) -> Result<usize> {
+    pub fn delete(conn: &MysqlConnection, account: &Account) -> Result<usize> {
         use schema::accounts::dsl::*;
 
         let n = diesel::delete(accounts.find(account.id)).execute(conn)?;

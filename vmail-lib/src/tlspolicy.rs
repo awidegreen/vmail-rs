@@ -1,3 +1,4 @@
+#![allow(proc_macro_derive_resolution_fallback)]
 use super::schema::tlspolicies;
 
 #[derive(DbEnum, Debug, PartialEq)]
@@ -27,5 +28,3 @@ pub struct NewTlspolicy {
     pub policy: PolicyEnum,
     pub params: Option<String>,
 }
-
-
