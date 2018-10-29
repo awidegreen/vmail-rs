@@ -1,6 +1,30 @@
-[workspace]
+[package]
+name = "vmail-rs"
+version = "0.1.0"
+authors = [ "Armin Widegreen <vmail@widegreen.net>"]
+license = "ISC"
+documentation = "https://github.com/awidegreen/vmail-rs"
+homepage = "https://github.com/awidegreen/vmail-rs"
+repository = "https://github.com/awidegreen/vmail-rs"
+readme = "README.md"
 
+[badges]
+travis-ci = { repository = "awidegreen/vmail-rs" }
+
+[[bin]]
+path = "src/main.rs"
+name = "vmail-cli"
+
+[dependencies]
+clap = "2.32.0"
+rpassword = "2.0.0"
+vmail-lib  = { path = "vmail-lib" }
+failure = "0.1.2"
+failure_derive = "0.1.2"
+rand = "0.5.5"
+sha-crypt = { git = "https://github.com/awidegreen/password-hashing.git",  branch = "add_sha-crypt", features = ["include_simple"] }
+
+[workspace]
 members = [
   "vmail-lib",
-  "vmail-cli",
 ]

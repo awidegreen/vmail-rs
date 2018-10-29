@@ -14,8 +14,8 @@ main() {
     cross test --target $TARGET
     cross test --target $TARGET --release
 
-    cross run --target $TARGET -p vmail-cli -- help
-    cross run --target $TARGET --release -p vmail-cli -- help
+    cross run --target $TARGET -- help
+    cross run --target $TARGET --release -- help
 }
 
 # we don't run the "test phase" when doing deploys
