@@ -29,6 +29,7 @@ fn query_for_password() -> Option<String> {
 fn show(matches: &ArgMatches) -> Result<()> {
     let username = matches.value_of("USER").unwrap_or("");
     let domain = matches.value_of("domain");
+    let verbose = matches.is_present("verbose");
 
     let conn = vmail_lib::establish_connection();
 
@@ -43,7 +44,16 @@ fn show(matches: &ArgMatches) -> Result<()> {
         .iter()
         .filter(|a| username.is_empty() || a.username == username)
     {
-        println!("{}\n", &acc);
+        println!("{}", &acc);
+        if verbose {
+            if let Ok(aliases) = Alias::all_by_dest_account(&conn, acc) {
+                println!("Aliases: ");
+                for al in aliases {
+                    println!(" {}@{} ", al.source_username, al.source_domain);
+                }
+            }
+        }
+        println!("");
     }
 
     Ok(())
