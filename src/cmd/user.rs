@@ -1,6 +1,8 @@
 use clap::ArgMatches;
 use crypt::{hash, PasswordScheme};
+use dotenv::dotenv;
 use rpassword;
+use std::env;
 use std::process;
 use vmail_lib;
 use vmail_lib::account::{Account, NewAccount};
@@ -9,6 +11,9 @@ use vmail_lib::domain::Domain;
 use vmail_lib::result::Result;
 
 use utils;
+
+const DOMAIN_MISSING: &'static str =
+    "A domain has to be provided via user command (arg '-d|--domain') or via '.env' file";
 
 fn query_for_password() -> Option<String> {
     let pass = rpassword::prompt_password_stdout("Password: ").unwrap();
@@ -26,15 +31,15 @@ fn query_for_password() -> Option<String> {
     Some(pass)
 }
 
-fn show(matches: &ArgMatches) -> Result<()> {
+fn show(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap_or("");
-    let domain = matches.value_of("domain");
     let verbose = matches.is_present("verbose");
 
     let conn = vmail_lib::establish_connection();
 
     let accounts = if let Some(domain) = domain {
         let domain = Domain::get(&conn, &domain)?;
+        println!("Show accounts for domain: {}", domain);
         Account::all_by_domain(&conn, &domain)?
     } else {
         Account::all(&conn)?
@@ -59,11 +64,12 @@ fn show(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
-fn add(matches: &ArgMatches) -> Result<()> {
+fn add(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     let enabled = !matches.is_present("disabled");
     let sendonly = matches.is_present("sendonly");
     let username = matches.value_of("USER").unwrap();
-    let domain = matches.value_of("DOMAIN").unwrap();
+    let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
+
     let quota = value_t!(matches.value_of("quota"), i32).unwrap_or_else(|e| {
         eprintln!("Argument 'quota' has to be >= 0");
         e.exit()
@@ -98,9 +104,9 @@ fn add(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
-fn remove(matches: &ArgMatches) -> Result<()> {
+fn remove(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
-    let domain = matches.value_of("DOMAIN").unwrap();
+    let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
     let verbose = matches.is_present("verbose");
     let force = matches.is_present("force");
     let m = format!(
@@ -139,9 +145,9 @@ fn remove(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
-fn password(matches: &ArgMatches) -> Result<()> {
+fn password(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
-    let domain = matches.value_of("DOMAIN").unwrap();
+    let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
 
     let conn = vmail_lib::establish_connection();
     let mut acc = Account::get(&conn, username, domain)?;
@@ -154,13 +160,13 @@ fn password(matches: &ArgMatches) -> Result<()> {
     acc.password = pass;
     Account::save(&conn, &acc)?;
 
-    println!("Password has been changed!");
+    println!("Password has been changed for {}@{}!", username, domain);
     Ok(())
 }
 
-fn edit(matches: &ArgMatches) -> Result<()> {
+fn edit(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
-    let domain = matches.value_of("DOMAIN").unwrap();
+    let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
 
     let conn = vmail_lib::establish_connection();
     let mut acc = Account::get(&conn, username, domain)?;
@@ -188,18 +194,30 @@ fn edit(matches: &ArgMatches) -> Result<()> {
 
     Account::save(&conn, &acc)?;
 
-    println!("Password has been updated!");
+    println!("Account updated: {}", acc);
 
     Ok(())
 }
 
 pub fn dispatch(matches: &ArgMatches) -> Result<()> {
+    dotenv().ok();
+
+    let default_domain = env::var("DEFAULT_DOMAIN");
+    let mut domain = if let Some(domain) = default_domain.as_ref().ok() {
+        Some(domain.as_str())
+    } else {
+        None
+    };
+    if let Some(d) = matches.value_of("domain") {
+        domain = Some(d)
+    }
+
     match matches.subcommand() {
-        ("show", Some(m)) => show(m),
-        ("add", Some(m)) => add(m),
-        ("remove", Some(m)) => remove(m),
-        ("password", Some(m)) => password(m),
-        ("edit", Some(m)) => edit(m),
-        _ => show(matches),
+        ("show", Some(m)) => show(m, domain),
+        ("add", Some(m)) => add(m, domain),
+        ("remove", Some(m)) => remove(m, domain),
+        ("password", Some(m)) => password(m, domain),
+        ("edit", Some(m)) => edit(m, domain),
+        _ => show(matches, domain),
     }
 }

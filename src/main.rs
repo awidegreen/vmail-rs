@@ -4,6 +4,7 @@ extern crate rpassword;
 extern crate vmail_lib;
 #[macro_use]
 extern crate failure;
+extern crate dotenv;
 extern crate rand;
 extern crate sha_crypt;
 

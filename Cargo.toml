@@ -16,6 +16,7 @@ path = "src/main.rs"
 name = "vmail-cli"
 
 [dependencies]
+dotenv = "0.13.0"
 clap = "2.32.0"
 rpassword = "2.0.0"
 vmail-lib  = { path = "vmail-lib" }
