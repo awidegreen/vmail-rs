@@ -1,14 +1,14 @@
-use clap::ArgMatches;
+use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use crypt::{hash, PasswordScheme};
 use dotenv::dotenv;
 use rpassword;
 use std::env;
 use std::process;
-use vmail_lib;
 use vmail_lib::account::{Account, NewAccount};
 use vmail_lib::alias::Alias;
 use vmail_lib::domain::Domain;
 use vmail_lib::result::Result;
+use vmail_lib::{establish_connection, DatabaseConnection};
 
 use utils;
 
@@ -31,11 +31,9 @@ fn query_for_password() -> Option<String> {
     Some(pass)
 }
 
-fn show(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
+fn show(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap_or("");
     let verbose = matches.is_present("verbose");
-
-    let conn = vmail_lib::establish_connection();
 
     let accounts = if let Some(domain) = domain {
         let domain = Domain::get(&conn, &domain)?;
@@ -64,7 +62,7 @@ fn show(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-fn add(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
+fn add(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) -> Result<()> {
     let enabled = !matches.is_present("disabled");
     let sendonly = matches.is_present("sendonly");
     let username = matches.value_of("USER").unwrap();
@@ -74,8 +72,6 @@ fn add(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
         eprintln!("Argument 'quota' has to be >= 0");
         e.exit()
     });
-
-    let conn = vmail_lib::establish_connection();
 
     if !Domain::exsits(&conn, domain)? {
         return Err(format_err!(
@@ -104,7 +100,7 @@ fn add(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-fn remove(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
+fn remove(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
     let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
     let verbose = matches.is_present("verbose");
@@ -114,7 +110,6 @@ fn remove(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
         username, domain
     );
 
-    let conn = vmail_lib::establish_connection();
     let acc = Account::get(&conn, username, domain)?;
 
     if !force && utils::yes_no(&m, utils::YesNoAnswer::NO) == utils::YesNoAnswer::NO {
@@ -145,11 +140,10 @@ fn remove(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-fn password(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
+fn password(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
     let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
 
-    let conn = vmail_lib::establish_connection();
     let mut acc = Account::get(&conn, username, domain)?;
 
     let user = format!("{}@{}", username, domain);
@@ -164,11 +158,10 @@ fn password(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-fn edit(matches: &ArgMatches, domain: Option<&str>) -> Result<()> {
+fn edit(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) -> Result<()> {
     let username = matches.value_of("USER").unwrap();
     let domain = domain.ok_or_else(|| format_err!("{}", DOMAIN_MISSING))?;
 
-    let conn = vmail_lib::establish_connection();
     let mut acc = Account::get(&conn, username, domain)?;
 
     if matches.is_present("enable") {
@@ -212,12 +205,112 @@ pub fn dispatch(matches: &ArgMatches) -> Result<()> {
         domain = Some(d)
     }
 
+    let conn = establish_connection();
+
     match matches.subcommand() {
-        ("show", Some(m)) => show(m, domain),
-        ("add", Some(m)) => add(m, domain),
-        ("remove", Some(m)) => remove(m, domain),
-        ("password", Some(m)) => password(m, domain),
-        ("edit", Some(m)) => edit(m, domain),
-        _ => show(matches, domain),
+        ("show", Some(m)) => show(m, conn, domain),
+        ("add", Some(m)) => add(m, conn, domain),
+        ("remove", Some(m)) => remove(m, conn, domain),
+        ("password", Some(m)) => password(m, conn, domain),
+        ("edit", Some(m)) => edit(m, conn, domain),
+        _ => show(matches, conn, domain),
     }
+}
+
+pub fn get_subcommand() -> App<'static, 'static> {
+    SubCommand::with_name("user")
+        .about("User management for the vmail database")
+        .setting(AppSettings::SubcommandRequiredElseHelp)
+        .arg(Arg::with_name("domain")
+                .value_name("domain")
+                .long("domain")
+                .short("d")
+                .help("Domain to use for the user subcommands, default can be specified in '.env' file. E.g. mydomain.tld"))
+        .subcommand(SubCommand::with_name("show")
+                    .about("Show user account(s)")
+                    .arg(Arg::with_name("USER")
+                            .help("Name of the user account which should be shown"))
+                    .arg(Arg::with_name("verbose")
+                            .long("verbose")
+                            .short("v")
+                            .help("Verbose output (include aliases)"))
+                    )
+        .subcommand(SubCommand::with_name("add")
+                    .about("Add a user to the database")
+                    .alias("create")
+                    .alias("new")
+                    .arg(Arg::with_name("USER")
+                            .required(true)
+                            .help("Name of the user which should be added, without domain name, e.g. 'newuser1'"))
+                    .arg(Arg::with_name("disabled")
+                            .long("disabled")
+                            .short("d")
+                            .help("Disable the user, just add it to the database"))
+                    .arg(Arg::with_name("sendonly")
+                            .long("send-only")
+                            .short("s")
+                            .help("Allow the new user only to send email but not receive any."))
+                    .arg(Arg::with_name("quota")
+                            .value_name("quota")
+                            .long("quota")
+                            .short("q")
+                            .default_value("0")
+                            .help("Quota for user account in MB (Megabyte), default is 0 which is unlimited"))
+                    )
+        .subcommand(SubCommand::with_name("remove")
+                    .about("Remove a user from the database, will also delete all aliases for the user")
+                    .alias("rm")
+                    .alias("delete")
+                    .arg(Arg::with_name("force")
+                            .long("force")
+                            .short("f")
+                            .help("Force the deleting the given user"))
+                    .arg(Arg::with_name("verbose")
+                            .long("verbose")
+                            .short("v")
+                            .help("Verbose output what has been deleted"))
+                    .arg(Arg::with_name("USER")
+                            .required(true)
+                            .help("User which should be removed"))
+                    )
+        .subcommand(SubCommand::with_name("password")
+                    .about("Change the password for given user")
+                    .alias("pw")
+                    .arg(Arg::with_name("USER")
+                            .help("The user name which should be edited")
+                            .required(true))
+                    )
+        .subcommand(SubCommand::with_name("edit")
+                    .about("Edit a user account entry")
+                    .alias("change")
+                    .alias("update")
+                    .arg(Arg::with_name("USER")
+                            .help("The user name which should be edited")
+                            .required(true))
+                    .arg(Arg::with_name("disable")
+                            .long("disable")
+                            .short("d")
+                            .conflicts_with("enable")
+                            .help("Disable given user"))
+                    .arg(Arg::with_name("enable")
+                            .long("enable")
+                            .short("e")
+                            .conflicts_with("disable")
+                            .help("Enable given user"))
+                    .arg(Arg::with_name("sendonly")
+                            .long("send-only")
+                            .short("s")
+                            .conflicts_with("sendreceive")
+                            .help("Allow user only to send"))
+                    .arg(Arg::with_name("sendreceive")
+                            .long("send-receive")
+                            .short("r")
+                            .conflicts_with("sendonly")
+                            .help("Allow user to send and receive"))
+                    .arg(Arg::with_name("quota")
+                            .value_name("quota")
+                            .long("quota")
+                            .short("q")
+                            .help("Quota for user account in MB (Megabyte), 0 is unlimited"))
+                    )
 }
