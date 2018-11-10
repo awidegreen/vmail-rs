@@ -54,7 +54,7 @@ password).
 ```
 DATABASE_URL=mysql://vmail:vmailpassword@localhost
 ```
-Use the command help to get started, and see which subcommands exists.
+Use the command help to get started.
 
 ```shell
 vmail-cli --help
@@ -62,6 +62,9 @@ vmail-cli --help
 
 NOTE: all subcommands can also be shortcut'd. vmail-cli will automatically defer
 the correct command: `vmail-cli u s` equals `vmail-cli user show`
+
+The `user` subcommands can work on default domain. Therefore set
+`DEFAULT_DOMAIN=mydomain.org` in the `.env` file. More information below.
 
 ## Subcommand `domain`
 
@@ -71,6 +74,19 @@ Available subcommands are:
 * help
 * remove
 * show
+
+Use help for more information.
+
+```
+# Create domain
+vmail-cli domain add mydomain.org
+
+# Show domains
+vmail-cli domain show
+
+# Delete domain
+vmail-cli domain remove mydomain.org
+```
 
 ## Subcommand `user`
 
@@ -88,6 +104,26 @@ Available subcommands are:
 
 Use help for more information.
 
+The `user` commands will assume a default domain, which can be set in `.env`:
+`DEFAULT_DOMAIN=mydomain.org`. If you want to use different domain, the
+parameter `--domain|-d` for the `user` subcommand should be used. Further, if no
+default domain has been set, the domain parameter needs to be provided.
+```
+# Create user for default domain
+vmail-cli user add foo
+
+# Create user for other domain
+vmail-cli user -d otherdomain.org add foo
+
+# Show users for default domain
+vmail-cli user show
+
+# Delete user for default domain
+vmail-cli user remove foo
+
+# Delete user other domain
+vmail-cli user -d otherdomain.org remove foo
+```
 
 ## Subcommand `alias`
 
@@ -102,17 +138,34 @@ Available subcommands are:
 
 Use help for more information.
 
+```
+# Create alias 'bar@mydomain.org' for existing user-account 'foo@mydomain.org'
+vmail-cli alias add bar mydomain.org foo
+
+# Create alias 'hello@mydomain.org' for existing user-account 'foo@otherdomain.org'
+vmail-cli alias add hello mydomain.org foo otherdomain.org
+
+# Show aliases for all user accounts
+vmail-cli alias show
+
+# Show aliases for single user account
+vmail-cli alias show foo mydomain.org
+
+# Delete alias 'bar@mydomain.org'
+vmail-cli alias remove bar mydomain.org
+```
+
 # Misc
 
 ## Shell completions
 
-For bash, move `shell/vmail-cli.bash` to `$XDG_CONFIG_HOME/bash_completion` or `/etc/bash_completion.d/`.
+For bash, move `shell/vmail-cli.bash` to `$XDG_CONFIG_HOME/bash_completion/` or `/etc/bash_completion.d/`.
 
 For fish, move `shell/vmail-cli.fish` to `$HOME/.config/fish/completions/`.
 
 For zsh, move `shell/_vmail-cli` to one of your `$fpath` directories.
 
-For regenerating the shell completions, run `shell/gen_comp.sh` in the root of
+For regenerating the shell completions, run `shell/gen_comp.sh` from the root of
 the repository. The files in `shell/` will be updated accordingly. This will use
 vmail-cli hidden `completions` subcommand.
 
