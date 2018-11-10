@@ -8,8 +8,8 @@ extern crate failure;
 #[macro_use]
 extern crate failure_derive;
 
+use diesel::connection::Connection;
 use diesel::mysql::MysqlConnection;
-use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
 

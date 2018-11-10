@@ -36,6 +36,14 @@ fn add(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
     let dest_name = matches.value_of("DEST_USER").unwrap();
     let dest_domain = matches.value_of("DEST_DOMAIN").unwrap_or_else(|| domain);
 
+    if Account::get(&conn, name, domain).is_ok() {
+        return Err(format_err!(
+            "Unable to add alias: '{}@{}' exists as a user-account!",
+            name,
+            domain
+        ));
+    }
+
     let a = Alias::with_address(name, domain)
         .to_domain(dest_domain)
         .to_user(dest_name)

@@ -92,12 +92,12 @@ impl Alias {
         }
     }
 
-    pub fn get(conn: &MysqlConnection, dest_name: &str, dest_domain: &str) -> Result<Alias> {
+    pub fn get(conn: &MysqlConnection, name: &str, domain: &str) -> Result<Alias> {
         use schema::aliases::dsl::*;
 
         let mut r = aliases
-            .filter(destination_username.eq(dest_name))
-            .filter(destination_domain.eq(dest_domain))
+            .filter(source_username.eq(name))
+            .filter(source_domain.eq(domain))
             .limit(1)
             .load::<Alias>(conn)?;
 
@@ -107,7 +107,7 @@ impl Alias {
 
         bail!(VmailError::NotFound(format!(
             "Alias: destination {}@{}",
-            dest_name, dest_domain
+            name, domain
         )));
     }
 
