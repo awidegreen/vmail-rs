@@ -95,7 +95,6 @@ impl Account {
 
         let r = accounts
             .filter(domain.eq(&d.domain))
-            .limit(1)
             .load::<Account>(conn)?;
 
         if !r.is_empty() {
