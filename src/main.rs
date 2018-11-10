@@ -8,6 +8,7 @@ extern crate dotenv;
 extern crate rand;
 extern crate sha_crypt;
 
+use std::io;
 use std::process;
 
 mod cli;
@@ -23,6 +24,15 @@ fn main() {
         ("user", Some(m)) => cmd::user::dispatch(m),
         ("alias", Some(m)) => cmd::alias::dispatch(m),
         ("domain", Some(m)) => cmd::domain::dispatch(m),
+        ("completions", Some(m)) => {
+            let shell = m.value_of("SHELL").unwrap();
+            cli::build_cli().gen_completions_to(
+                "vmail-cli",
+                shell.parse().unwrap(),
+                &mut io::stdout(),
+            );
+            Ok(())
+        }
         //("policies", Some(m)) => user(m),
         _ => Err(format_err!("Subcommand not implemented")),
     };

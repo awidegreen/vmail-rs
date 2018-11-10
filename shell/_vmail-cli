@@ -1,0 +1,833 @@
+#compdef vmail-cli
+
+autoload -U is-at-least
+
+_vmail-cli() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+":: :_vmail-cli_commands" \
+"*::: :->vmail-cli" \
+&& ret=0
+    case $state in
+    (vmail-cli)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:vmail-cli-command-$line[1]:"
+        case $line[1] in
+            (user)
+_arguments "${_arguments_options[@]}" \
+'-d+[Domain to use for the user subcommands, default can be specified in '\''.env'\'' file. E.g. mydomain.tld]' \
+'--domain=[Domain to use for the user subcommands, default can be specified in '\''.env'\'' file. E.g. mydomain.tld]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+":: :_vmail-cli__user_commands" \
+"*::: :->user" \
+&& ret=0
+case $state in
+    (user)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:vmail-cli-user-command-$line[1]:"
+        case $line[1] in
+            (show)
+_arguments "${_arguments_options[@]}" \
+'-v[Verbose output (include aliases)]' \
+'--verbose[Verbose output (include aliases)]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::USER -- Name of the user account which should be shown:_files' \
+&& ret=0
+;;
+(create)
+_arguments "${_arguments_options[@]}" \
+'-q+[Quota for user account in MB (Megabyte), default is 0 which is unlimited]' \
+'--quota=[Quota for user account in MB (Megabyte), default is 0 which is unlimited]' \
+'-d[Disable the user, just add it to the database]' \
+'--disabled[Disable the user, just add it to the database]' \
+'-s[Allow the new user only to send email but not receive any.]' \
+'--send-only[Allow the new user only to send email but not receive any.]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- Name of the user which should be added, without domain name, e.g. 'newuser1':_files' \
+&& ret=0
+;;
+(new)
+_arguments "${_arguments_options[@]}" \
+'-q+[Quota for user account in MB (Megabyte), default is 0 which is unlimited]' \
+'--quota=[Quota for user account in MB (Megabyte), default is 0 which is unlimited]' \
+'-d[Disable the user, just add it to the database]' \
+'--disabled[Disable the user, just add it to the database]' \
+'-s[Allow the new user only to send email but not receive any.]' \
+'--send-only[Allow the new user only to send email but not receive any.]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- Name of the user which should be added, without domain name, e.g. 'newuser1':_files' \
+&& ret=0
+;;
+(add)
+_arguments "${_arguments_options[@]}" \
+'-q+[Quota for user account in MB (Megabyte), default is 0 which is unlimited]' \
+'--quota=[Quota for user account in MB (Megabyte), default is 0 which is unlimited]' \
+'-d[Disable the user, just add it to the database]' \
+'--disabled[Disable the user, just add it to the database]' \
+'-s[Allow the new user only to send email but not receive any.]' \
+'--send-only[Allow the new user only to send email but not receive any.]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- Name of the user which should be added, without domain name, e.g. 'newuser1':_files' \
+&& ret=0
+;;
+(rm)
+_arguments "${_arguments_options[@]}" \
+'-f[Force the deleting the given user]' \
+'--force[Force the deleting the given user]' \
+'-v[Verbose output what has been deleted]' \
+'--verbose[Verbose output what has been deleted]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- User which should be removed:_files' \
+&& ret=0
+;;
+(delete)
+_arguments "${_arguments_options[@]}" \
+'-f[Force the deleting the given user]' \
+'--force[Force the deleting the given user]' \
+'-v[Verbose output what has been deleted]' \
+'--verbose[Verbose output what has been deleted]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- User which should be removed:_files' \
+&& ret=0
+;;
+(remove)
+_arguments "${_arguments_options[@]}" \
+'-f[Force the deleting the given user]' \
+'--force[Force the deleting the given user]' \
+'-v[Verbose output what has been deleted]' \
+'--verbose[Verbose output what has been deleted]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- User which should be removed:_files' \
+&& ret=0
+;;
+(pw)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The user name which should be edited:_files' \
+&& ret=0
+;;
+(password)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The user name which should be edited:_files' \
+&& ret=0
+;;
+(change)
+_arguments "${_arguments_options[@]}" \
+'-q+[Quota for user account in MB (Megabyte), 0 is unlimited]' \
+'--quota=[Quota for user account in MB (Megabyte), 0 is unlimited]' \
+'(-e --enable)-d[Disable given user]' \
+'(-e --enable)--disable[Disable given user]' \
+'(-d --disable)-e[Enable given user]' \
+'(-d --disable)--enable[Enable given user]' \
+'(-r --send-receive)-s[Allow user only to send]' \
+'(-r --send-receive)--send-only[Allow user only to send]' \
+'(-s --send-only)-r[Allow user to send and receive]' \
+'(-s --send-only)--send-receive[Allow user to send and receive]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The user name which should be edited:_files' \
+&& ret=0
+;;
+(update)
+_arguments "${_arguments_options[@]}" \
+'-q+[Quota for user account in MB (Megabyte), 0 is unlimited]' \
+'--quota=[Quota for user account in MB (Megabyte), 0 is unlimited]' \
+'(-e --enable)-d[Disable given user]' \
+'(-e --enable)--disable[Disable given user]' \
+'(-d --disable)-e[Enable given user]' \
+'(-d --disable)--enable[Enable given user]' \
+'(-r --send-receive)-s[Allow user only to send]' \
+'(-r --send-receive)--send-only[Allow user only to send]' \
+'(-s --send-only)-r[Allow user to send and receive]' \
+'(-s --send-only)--send-receive[Allow user to send and receive]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The user name which should be edited:_files' \
+&& ret=0
+;;
+(edit)
+_arguments "${_arguments_options[@]}" \
+'-q+[Quota for user account in MB (Megabyte), 0 is unlimited]' \
+'--quota=[Quota for user account in MB (Megabyte), 0 is unlimited]' \
+'(-e --enable)-d[Disable given user]' \
+'(-e --enable)--disable[Disable given user]' \
+'(-d --disable)-e[Enable given user]' \
+'(-d --disable)--enable[Enable given user]' \
+'(-r --send-receive)-s[Allow user only to send]' \
+'(-r --send-receive)--send-only[Allow user only to send]' \
+'(-s --send-only)-r[Allow user to send and receive]' \
+'(-s --send-only)--send-receive[Allow user to send and receive]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The user name which should be edited:_files' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(domain)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+":: :_vmail-cli__domain_commands" \
+"*::: :->domain" \
+&& ret=0
+case $state in
+    (domain)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:vmail-cli-domain-command-$line[1]:"
+        case $line[1] in
+            (list)
+_arguments "${_arguments_options[@]}" \
+'-u[Show all users for the domain]' \
+'--with-users[Show all users for the domain]' \
+'-a[Show all aliases for the users]' \
+'--with-aliases[Show all aliases for the users]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::DOMAIN -- Filter on domain:_files' \
+&& ret=0
+;;
+(ls)
+_arguments "${_arguments_options[@]}" \
+'-u[Show all users for the domain]' \
+'--with-users[Show all users for the domain]' \
+'-a[Show all aliases for the users]' \
+'--with-aliases[Show all aliases for the users]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::DOMAIN -- Filter on domain:_files' \
+&& ret=0
+;;
+(show)
+_arguments "${_arguments_options[@]}" \
+'-u[Show all users for the domain]' \
+'--with-users[Show all users for the domain]' \
+'-a[Show all aliases for the users]' \
+'--with-aliases[Show all aliases for the users]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::DOMAIN -- Filter on domain:_files' \
+&& ret=0
+;;
+(add)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':DOMAIN -- The domain name which should be added.:_files' \
+&& ret=0
+;;
+(rm)
+_arguments "${_arguments_options[@]}" \
+'-f[Force the deleting the given domain]' \
+'--force[Force the deleting the given domain]' \
+'-v[Verbose output what has been deleted]' \
+'--verbose[Verbose output what has been deleted]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':DOMAIN -- The domain name which should be deleted.:_files' \
+&& ret=0
+;;
+(delete)
+_arguments "${_arguments_options[@]}" \
+'-f[Force the deleting the given domain]' \
+'--force[Force the deleting the given domain]' \
+'-v[Verbose output what has been deleted]' \
+'--verbose[Verbose output what has been deleted]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':DOMAIN -- The domain name which should be deleted.:_files' \
+&& ret=0
+;;
+(remove)
+_arguments "${_arguments_options[@]}" \
+'-f[Force the deleting the given domain]' \
+'--force[Force the deleting the given domain]' \
+'-v[Verbose output what has been deleted]' \
+'--verbose[Verbose output what has been deleted]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':DOMAIN -- The domain name which should be deleted.:_files' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(alias)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+":: :_vmail-cli__alias_commands" \
+"*::: :->alias" \
+&& ret=0
+case $state in
+    (alias)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:vmail-cli-alias-command-$line[1]:"
+        case $line[1] in
+            (list)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::DEST_USER -- username to filter for:_files' \
+'::DEST_DOMAIN -- domain to filter for:_files' \
+&& ret=0
+;;
+(ls)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::DEST_USER -- username to filter for:_files' \
+'::DEST_DOMAIN -- domain to filter for:_files' \
+&& ret=0
+;;
+(show)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+'::DEST_USER -- username to filter for:_files' \
+'::DEST_DOMAIN -- domain to filter for:_files' \
+&& ret=0
+;;
+(create)
+_arguments "${_arguments_options[@]}" \
+'-d[Set alias to disabled]' \
+'--disabled[Set alias to disabled]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The username for the alias:_files' \
+':DOMAIN -- Existing domain for the alias:_files' \
+':DEST_USER -- Existing user account:_files' \
+'::DEST_DOMAIN -- If not specified, this will assume to DOMAIN value:_files' \
+&& ret=0
+;;
+(new)
+_arguments "${_arguments_options[@]}" \
+'-d[Set alias to disabled]' \
+'--disabled[Set alias to disabled]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The username for the alias:_files' \
+':DOMAIN -- Existing domain for the alias:_files' \
+':DEST_USER -- Existing user account:_files' \
+'::DEST_DOMAIN -- If not specified, this will assume to DOMAIN value:_files' \
+&& ret=0
+;;
+(add)
+_arguments "${_arguments_options[@]}" \
+'-d[Set alias to disabled]' \
+'--disabled[Set alias to disabled]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- The username for the alias:_files' \
+':DOMAIN -- Existing domain for the alias:_files' \
+':DEST_USER -- Existing user account:_files' \
+'::DEST_DOMAIN -- If not specified, this will assume to DOMAIN value:_files' \
+&& ret=0
+;;
+(rm)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- :_files' \
+':DOMAIN -- Existing domain:_files' \
+&& ret=0
+;;
+(delete)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- :_files' \
+':DOMAIN -- Existing domain:_files' \
+&& ret=0
+;;
+(remove)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':USER -- :_files' \
+':DOMAIN -- Existing domain:_files' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(completions)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':SHELL -- The shell to generate the script for:(bash fish zsh)' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_vmail-cli_commands] )) ||
+_vmail-cli_commands() {
+    local commands; commands=(
+        "user:User management for the vmail database" \
+"domain:Manage domains for a vmail database" \
+"alias:Manage aliases for the vmail database" \
+"completions:Generates completion scripts for your shell" \
+"help:Prints this message or the help of the given subcommand(s)" \
+    )
+    _describe -t commands 'vmail-cli commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__add_commands] )) ||
+_vmail-cli__alias__add_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias add commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__add_commands] )) ||
+_vmail-cli__domain__add_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain add commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__add_commands] )) ||
+_vmail-cli__user__add_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user add commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias_commands] )) ||
+_vmail-cli__alias_commands() {
+    local commands; commands=(
+        "show:Show aliases for user" \
+"add:Add an alias to an existing user account" \
+"remove:Remove an alias from the database" \
+"help:Prints this message or the help of the given subcommand(s)" \
+    )
+    _describe -t commands 'vmail-cli alias commands' commands "$@"
+}
+(( $+functions[_vmail-cli__change_commands] )) ||
+_vmail-cli__change_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli change commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__change_commands] )) ||
+_vmail-cli__user__change_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user change commands' commands "$@"
+}
+(( $+functions[_vmail-cli__completions_commands] )) ||
+_vmail-cli__completions_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli completions commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__create_commands] )) ||
+_vmail-cli__alias__create_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias create commands' commands "$@"
+}
+(( $+functions[_vmail-cli__create_commands] )) ||
+_vmail-cli__create_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli create commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__create_commands] )) ||
+_vmail-cli__user__create_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user create commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__delete_commands] )) ||
+_vmail-cli__alias__delete_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias delete commands' commands "$@"
+}
+(( $+functions[_vmail-cli__delete_commands] )) ||
+_vmail-cli__delete_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli delete commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__delete_commands] )) ||
+_vmail-cli__domain__delete_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain delete commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__delete_commands] )) ||
+_vmail-cli__user__delete_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user delete commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain_commands] )) ||
+_vmail-cli__domain_commands() {
+    local commands; commands=(
+        "show:Show domains" \
+"add:Add a new domain to the database" \
+"remove:Remove a domain from the database, this will also delete all related users." \
+"help:Prints this message or the help of the given subcommand(s)" \
+    )
+    _describe -t commands 'vmail-cli domain commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__edit_commands] )) ||
+_vmail-cli__user__edit_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user edit commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__help_commands] )) ||
+_vmail-cli__alias__help_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias help commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__help_commands] )) ||
+_vmail-cli__domain__help_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain help commands' commands "$@"
+}
+(( $+functions[_vmail-cli__help_commands] )) ||
+_vmail-cli__help_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli help commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__help_commands] )) ||
+_vmail-cli__user__help_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user help commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__list_commands] )) ||
+_vmail-cli__alias__list_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias list commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__list_commands] )) ||
+_vmail-cli__domain__list_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain list commands' commands "$@"
+}
+(( $+functions[_vmail-cli__list_commands] )) ||
+_vmail-cli__list_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli list commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__ls_commands] )) ||
+_vmail-cli__alias__ls_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias ls commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__ls_commands] )) ||
+_vmail-cli__domain__ls_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain ls commands' commands "$@"
+}
+(( $+functions[_vmail-cli__ls_commands] )) ||
+_vmail-cli__ls_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli ls commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__new_commands] )) ||
+_vmail-cli__alias__new_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias new commands' commands "$@"
+}
+(( $+functions[_vmail-cli__new_commands] )) ||
+_vmail-cli__new_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli new commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__new_commands] )) ||
+_vmail-cli__user__new_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user new commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__password_commands] )) ||
+_vmail-cli__user__password_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user password commands' commands "$@"
+}
+(( $+functions[_vmail-cli__pw_commands] )) ||
+_vmail-cli__pw_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli pw commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__pw_commands] )) ||
+_vmail-cli__user__pw_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user pw commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__remove_commands] )) ||
+_vmail-cli__alias__remove_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias remove commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__remove_commands] )) ||
+_vmail-cli__domain__remove_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain remove commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__remove_commands] )) ||
+_vmail-cli__user__remove_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user remove commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__rm_commands] )) ||
+_vmail-cli__alias__rm_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias rm commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__rm_commands] )) ||
+_vmail-cli__domain__rm_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain rm commands' commands "$@"
+}
+(( $+functions[_vmail-cli__rm_commands] )) ||
+_vmail-cli__rm_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli rm commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__rm_commands] )) ||
+_vmail-cli__user__rm_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user rm commands' commands "$@"
+}
+(( $+functions[_vmail-cli__alias__show_commands] )) ||
+_vmail-cli__alias__show_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli alias show commands' commands "$@"
+}
+(( $+functions[_vmail-cli__domain__show_commands] )) ||
+_vmail-cli__domain__show_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli domain show commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__show_commands] )) ||
+_vmail-cli__user__show_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user show commands' commands "$@"
+}
+(( $+functions[_vmail-cli__update_commands] )) ||
+_vmail-cli__update_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli update commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user__update_commands] )) ||
+_vmail-cli__user__update_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'vmail-cli user update commands' commands "$@"
+}
+(( $+functions[_vmail-cli__user_commands] )) ||
+_vmail-cli__user_commands() {
+    local commands; commands=(
+        "show:Show user account(s)" \
+"add:Add a user to the database" \
+"remove:Remove a user from the database, will also delete all aliases for the user" \
+"password:Change the password for given user" \
+"edit:Edit a user account entry" \
+"help:Prints this message or the help of the given subcommand(s)" \
+    )
+    _describe -t commands 'vmail-cli user commands' commands "$@"
+}
+
+_vmail-cli "$@"

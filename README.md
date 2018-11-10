@@ -102,6 +102,20 @@ Available subcommands are:
 
 Use help for more information.
 
+# Misc
+
+## Shell completions
+
+For bash, move `shell/vmail-cli.bash` to `$XDG_CONFIG_HOME/bash_completion` or `/etc/bash_completion.d/`.
+
+For fish, move `shell/vmail-cli.fish` to `$HOME/.config/fish/completions/`.
+
+For zsh, move `shell/_vmail-cli` to one of your `$fpath` directories.
+
+For regenerating the shell completions, run `shell/gen_comp.sh` in the root of
+the repository. The files in `shell/` will be updated accordingly. This will use
+vmail-cli hidden `completions` subcommand.
+
 # How to contribute
 
 Create new issues if you find bugs or want to a new features. Pull requests are
