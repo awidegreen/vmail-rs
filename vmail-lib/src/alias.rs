@@ -40,7 +40,7 @@ impl fmt::Display for Alias {
             self.source_username,
             self.source_domain,
             self.destination_username,
-            self.source_domain,
+            self.destination_domain,
             enabled
         )
     }
