@@ -52,7 +52,7 @@ configuration parameter (be aware of the URI character encoding for the
 password).
 
 ```
-DATABASE_URL=mysql://vmail:vmailpassword@localhost
+DATABASE_URL=mysql://vmail:vmailpassword@localhost/database_name
 ```
 Use the command help to get started.
 
