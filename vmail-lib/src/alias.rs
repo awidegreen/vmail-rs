@@ -92,23 +92,15 @@ impl Alias {
         }
     }
 
-    pub fn get(conn: &MysqlConnection, name: &str, domain: &str) -> Result<Alias> {
+    pub fn get(conn: &MysqlConnection, name: &str, domain: &str) -> Result<Vec<Alias>> {
         use schema::aliases::dsl::*;
 
-        let mut r = aliases
+        let r = aliases
             .filter(source_username.eq(name))
             .filter(source_domain.eq(domain))
-            .limit(1)
             .load::<Alias>(conn)?;
 
-        if let Some(r) = r.pop() {
-            return Ok(r);
-        }
-
-        bail!(VmailError::NotFound(format!(
-            "Alias: destination {}@{}",
-            name, domain
-        )));
+        Ok(r)
     }
 
     pub fn all(conn: &MysqlConnection) -> Result<Vec<Alias>> {
@@ -116,24 +108,6 @@ impl Alias {
 
         let r = aliases.load::<Alias>(conn)?;
         Ok(r)
-    }
-
-    pub fn all_by_src_account(conn: &MysqlConnection, account: &Account) -> Result<Vec<Alias>> {
-        use schema::aliases::dsl::*;
-
-        let r = aliases
-            .filter(source_username.eq(&account.username))
-            .filter(source_domain.eq(&account.domain))
-            .load::<Alias>(conn)?;
-
-        if !r.is_empty() {
-            return Ok(r);
-        }
-
-        bail!(VmailError::NotFound(format!(
-            "Alias source_username: {}, source_domain: {}",
-            account.username, account.domain
-        )));
     }
 
     pub fn all_by_dest_account(conn: &MysqlConnection, account: &Account) -> Result<Vec<Alias>> {

@@ -4,6 +4,8 @@ use vmail_lib::alias::Alias;
 use vmail_lib::result::Result;
 use vmail_lib::{establish_connection, DatabaseConnection};
 
+use utils;
+
 //------------------------------------------------------------------------------
 
 fn show(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
@@ -64,11 +66,34 @@ fn add(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
 fn remove(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
     let user = matches.value_of("USER").unwrap();
     let domain = matches.value_of("DOMAIN").unwrap();
+    let dest_user = matches.value_of("dest_user");
+    let dest_domain = matches.value_of("dest_domain");
+    let force = matches.is_present("force");
 
-    let alias = Alias::get(&conn, user, domain)?;
-    Alias::delete(&conn, &alias)?;
+    let aliases = Alias::get(&conn, user, domain)?;
 
-    println!("Alias '{}@{}' has been deleted!", user, domain);
+    for alias in aliases {
+        if let Some(dest_user) = dest_user {
+            if alias.destination_username != dest_user {
+                continue;
+            }
+        }
+        if let Some(dest_domain) = dest_domain {
+            if alias.destination_domain != dest_domain {
+                continue;
+            }
+        }
+
+        if !force {
+            let m = format!("Shall the alias {} really be removed?", alias);
+            if utils::yes_no(&m, utils::YesNoAnswer::NO) == utils::YesNoAnswer::NO {
+                continue;
+            }
+        }
+        Alias::delete(&conn, &alias)?;
+
+        println!("Alias {} has been deleted!", alias);
+    }
 
     Ok(())
 }
@@ -128,14 +153,34 @@ pub fn get_subcommand() -> App<'static, 'static> {
                 ),
         ).subcommand(
             SubCommand::with_name("remove")
-                .about("Remove an alias from the database")
+                .about("Remove aliases from the database")
                 .alias("rm")
                 .alias("delete")
-                .arg(Arg::with_name("USER").required(true).help(""))
                 .arg(
+                    Arg::with_name("USER")
+                        .required(true)
+                        .help("Username for the alias"),
+                ).arg(
                     Arg::with_name("DOMAIN")
                         .required(true)
-                        .help("Existing domain"),
+                        .help("Domain of the alias (need to exist)"),
+                ).arg(
+                    Arg::with_name("dest_user")
+                        .value_name("dest_user")
+                        .long("destination-user")
+                        .short("u")
+                        .help("Filter on destination account/user name"),
+                ).arg(
+                    Arg::with_name("dest_domain")
+                        .value_name("dest_domain")
+                        .long("destination-domain")
+                        .short("d")
+                        .help("Filter on destination account/user domain"),
+                ).arg(
+                    Arg::with_name("force")
+                        .long("force")
+                        .short("f")
+                        .help("Delete the aliases without confirmation"),
                 ),
         )
 }
