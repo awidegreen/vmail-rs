@@ -11,7 +11,7 @@ use result::{Result, VmailError};
 #[derive(Queryable, PartialEq, Debug)]
 pub struct Alias {
     pub id: i32,
-    pub source_username: String,
+    pub source_username: Option<String>,
     pub source_domain: String,
     pub destination_username: String,
     pub destination_domain: String,
@@ -21,7 +21,7 @@ pub struct Alias {
 #[derive(Insertable)]
 #[table_name = "aliases"]
 pub struct NewAlias {
-    pub source_username: String,
+    pub source_username: Option<String>,
     pub source_domain: String,
     pub destination_username: String,
     pub destination_domain: String,
@@ -34,10 +34,15 @@ impl fmt::Display for Alias {
             Some(v) => v,
             _ => false,
         };
+        let username = match self.source_username {
+            Some(ref u) => u,
+            None => "%",
+        };
+
         write!(
             f,
             "{}@{} => {}@{} (enabled: {})",
-            self.source_username,
+            username,
             self.source_domain,
             self.destination_username,
             self.destination_domain,
@@ -48,7 +53,13 @@ impl fmt::Display for Alias {
 
 impl NewAlias {
     pub fn name(mut self, name: &str) -> Self {
-        self.source_username = String::from(name);
+        let name = if name == "%" {
+            None
+        } else {
+            Some(String::from(name))
+        };
+
+        self.source_username = name;
         self
     }
 
@@ -75,16 +86,21 @@ impl NewAlias {
 }
 
 impl Alias {
-    pub fn with_name(name: &str) -> NewAlias {
-        Alias::new().name(name)
+    pub fn source_username(&self) -> String {
+        let s = match self.source_username {
+            Some(ref u) => u,
+            None => "%",
+        };
+        String::from(s)
     }
+
     pub fn with_address(username: &str, domain: &str) -> NewAlias {
         Alias::new().domain(domain).name(username)
     }
 
     pub fn new() -> NewAlias {
         NewAlias {
-            source_username: String::new(),
+            source_username: Some(String::new()),
             source_domain: String::new(),
             destination_username: String::new(),
             destination_domain: String::new(),
@@ -95,11 +111,17 @@ impl Alias {
     pub fn get(conn: &MysqlConnection, name: &str, domain: &str) -> Result<Vec<Alias>> {
         use schema::aliases::dsl::*;
 
-        let r = aliases
-            .filter(source_username.eq(name))
-            .filter(source_domain.eq(domain))
-            .load::<Alias>(conn)?;
-
+        let r = if name == "%" {
+            aliases
+                .filter(source_username.is_null())
+                .filter(source_domain.eq(domain))
+                .load::<Alias>(conn)?
+        } else {
+            aliases
+                .filter(source_username.eq(name))
+                .filter(source_domain.eq(domain))
+                .load::<Alias>(conn)?
+        };
         Ok(r)
     }
 
@@ -154,6 +176,24 @@ impl Alias {
             },
             Err(e) => Err(format_err!("Other error: {}", e)),
             Ok(v) => Ok(v),
+        }
+    }
+
+    pub fn exsits(conn: &MysqlConnection, name: &str, domain_name: &str) -> bool {
+        use diesel::dsl::exists;
+        use diesel::select;
+        use schema::aliases::dsl::*;
+
+        let r = select(exists(
+            aliases
+                .filter(source_username.eq(name))
+                .filter(source_domain.eq(domain_name)),
+        ))
+        .get_result(conn);
+        if let Ok(v) = r {
+            v
+        } else {
+            false
         }
     }
 }

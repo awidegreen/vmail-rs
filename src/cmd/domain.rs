@@ -132,14 +132,16 @@ pub fn get_subcommand() -> App<'static, 'static> {
                         .long("with-users")
                         .short("u")
                         .help("Show all users for the domain"),
-                ).arg(
+                )
+                .arg(
                     Arg::with_name("with-aliases")
                         .long("with-aliases")
                         .short("a")
                         .requires("with-users")
                         .help("Show all aliases for the users"),
                 ),
-        ).subcommand(
+        )
+        .subcommand(
             SubCommand::with_name("add")
                 .about("Add a new domain to the database")
                 .arg(
@@ -147,22 +149,26 @@ pub fn get_subcommand() -> App<'static, 'static> {
                         .required(true)
                         .help("The domain name which should be added."),
                 ),
-        ).subcommand(
+        )
+        .subcommand(
             SubCommand::with_name("remove")
                 .about(
                     "Remove a domain from the database, this will also delete all related users.",
-                ).aliases(&["rm", "delete"])
+                )
+                .aliases(&["rm", "delete"])
                 .arg(
                     Arg::with_name("force")
                         .long("force")
                         .short("f")
                         .help("Force the deleting the given domain"),
-                ).arg(
+                )
+                .arg(
                     Arg::with_name("verbose")
                         .long("verbose")
                         .short("v")
                         .help("Verbose output what has been deleted"),
-                ).arg(
+                )
+                .arg(
                     Arg::with_name("DOMAIN")
                         .required(true)
                         .help("The domain name which should be deleted."),

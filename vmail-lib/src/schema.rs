@@ -16,7 +16,7 @@ table! {
 table! {
     aliases (id) {
         id -> Integer,
-        source_username -> Varchar,
+        source_username -> Nullable<Varchar>,
         source_domain -> Varchar,
         destination_username -> Varchar,
         destination_domain -> Varchar,

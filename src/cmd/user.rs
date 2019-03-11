@@ -52,7 +52,7 @@ fn show(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) ->
             if let Ok(aliases) = Alias::all_by_dest_account(&conn, acc) {
                 println!("Aliases: ");
                 for al in aliases {
-                    println!(" {}@{} ", al.source_username, al.source_domain);
+                    println!(" {}@{} ", al.source_username(), al.source_domain);
                 }
             }
         }

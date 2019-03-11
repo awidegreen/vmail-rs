@@ -154,6 +154,17 @@ vmail-cli alias show foo mydomain.org
 # Delete alias 'bar@mydomain.org'
 vmail-cli alias remove bar mydomain.org
 ```
+In order to add/remove a catch-all alias for a domain, the '%' (percentage)
+should be used as a username for the alias. Make sure that your database
+supports [such feature](https://thomas-leister.de/mailserver-debian-stretch/#wie-kann-ich-mit-diesem-setup-catch-all-adressen-realisieren).
+
+```
+# Add catch-all alias for 'mydomain.org' domain (alias for user 'foo')
+vmail-cli alias add % mydomain.org foo
+
+# Remove catch-all alias for 'mydomain.org' domain
+vmail-cli alias remove % mydomain.org
+```
 
 # Misc
 
