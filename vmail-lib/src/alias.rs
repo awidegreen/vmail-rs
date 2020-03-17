@@ -1,11 +1,11 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 
 use account::Account;
-use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
 use schema::aliases;
 use std::fmt;
 
+use database::DatabaseConnection;
 use result::{Result, VmailError};
 
 #[derive(Queryable, PartialEq, Debug)]
@@ -108,7 +108,7 @@ impl Alias {
         }
     }
 
-    pub fn get(conn: &MysqlConnection, name: &str, domain: &str) -> Result<Vec<Alias>> {
+    pub fn get(conn: &DatabaseConnection, name: &str, domain: &str) -> Result<Vec<Alias>> {
         use schema::aliases::dsl::*;
 
         let r = if name == "%" {
@@ -125,14 +125,14 @@ impl Alias {
         Ok(r)
     }
 
-    pub fn all(conn: &MysqlConnection) -> Result<Vec<Alias>> {
+    pub fn all(conn: &DatabaseConnection) -> Result<Vec<Alias>> {
         use schema::aliases::dsl::*;
 
         let r = aliases.load::<Alias>(conn)?;
         Ok(r)
     }
 
-    pub fn all_by_dest_account(conn: &MysqlConnection, account: &Account) -> Result<Vec<Alias>> {
+    pub fn all_by_dest_account(conn: &DatabaseConnection, account: &Account) -> Result<Vec<Alias>> {
         use schema::aliases::dsl::*;
 
         let r = aliases
@@ -150,7 +150,7 @@ impl Alias {
         )));
     }
 
-    pub fn delete(conn: &MysqlConnection, alias: &Alias) -> Result<usize> {
+    pub fn delete(conn: &DatabaseConnection, alias: &Alias) -> Result<usize> {
         use diesel::delete;
         use schema::aliases::dsl::*;
 
@@ -158,7 +158,7 @@ impl Alias {
         Ok(n)
     }
 
-    pub fn create(conn: &MysqlConnection, alias: &NewAlias) -> Result<usize> {
+    pub fn create(conn: &DatabaseConnection, alias: &NewAlias) -> Result<usize> {
         use diesel;
         use diesel::insert_into;
         use schema::aliases;
@@ -179,7 +179,7 @@ impl Alias {
         }
     }
 
-    pub fn exsits(conn: &MysqlConnection, name: &str, domain_name: &str) -> bool {
+    pub fn exsits(conn: &DatabaseConnection, name: &str, domain_name: &str) -> bool {
         use diesel::dsl::exists;
         use diesel::select;
         use schema::aliases::dsl::*;

@@ -1,12 +1,12 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 use diesel;
-use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
 use domain::Domain;
 use schema::accounts;
 use std::fmt;
 
 use result::{Result, VmailError};
+use database::DatabaseConnection;
 
 #[derive(Identifiable, AsChangeset, Queryable, PartialEq, Debug)]
 pub struct Account {
@@ -56,7 +56,7 @@ impl fmt::Display for Account {
 }
 
 impl Account {
-    pub fn get(conn: &MysqlConnection, name: &str, domain_: &str) -> Result<Account> {
+    pub fn get(conn: &DatabaseConnection, name: &str, domain_: &str) -> Result<Account> {
         use schema::accounts::dsl::*;
 
         let mut r = accounts
@@ -75,7 +75,7 @@ impl Account {
         )));
     }
 
-    pub fn all_by_username(conn: &MysqlConnection, name: &str) -> Result<Vec<Account>> {
+    pub fn all_by_username(conn: &DatabaseConnection, name: &str) -> Result<Vec<Account>> {
         use schema::accounts::dsl::*;
 
         let r = accounts
@@ -90,7 +90,7 @@ impl Account {
         bail!(VmailError::NotFound(format!("Account username: {}", name)));
     }
 
-    pub fn all_by_domain(conn: &MysqlConnection, d: &Domain) -> Result<Vec<Account>> {
+    pub fn all_by_domain(conn: &DatabaseConnection, d: &Domain) -> Result<Vec<Account>> {
         use schema::accounts::dsl::*;
 
         let r = accounts
@@ -107,14 +107,14 @@ impl Account {
         )));
     }
 
-    pub fn all(conn: &MysqlConnection) -> Result<Vec<Account>> {
+    pub fn all(conn: &DatabaseConnection) -> Result<Vec<Account>> {
         use schema::accounts::dsl::*;
         let r = accounts.load::<Account>(conn)?;
         Ok(r)
     }
 
     /// returns number of rows inserted
-    pub fn create(conn: &MysqlConnection, account: NewAccount) -> Result<usize> {
+    pub fn create(conn: &DatabaseConnection, account: NewAccount) -> Result<usize> {
         use schema::accounts;
 
         let n = diesel::insert_into(accounts::table)
@@ -124,14 +124,14 @@ impl Account {
     }
 
     /// returns number of rows deleted
-    pub fn delete(conn: &MysqlConnection, account: &Account) -> Result<usize> {
+    pub fn delete(conn: &DatabaseConnection, account: &Account) -> Result<usize> {
         use schema::accounts::dsl::*;
 
         let n = diesel::delete(accounts.find(account.id)).execute(conn)?;
         Ok(n)
     }
 
-    pub fn exsits(conn: &MysqlConnection, name: &str, domain_name: &str) -> bool {
+    pub fn exsits(conn: &DatabaseConnection, name: &str, domain_name: &str) -> bool {
         use diesel::dsl::exists;
         use diesel::select;
         use schema::accounts::dsl::*;
@@ -148,7 +148,7 @@ impl Account {
         }
     }
 
-    pub fn save(conn: &MysqlConnection, account: &Account) -> Result<usize> {
+    pub fn save(conn: &DatabaseConnection, account: &Account) -> Result<usize> {
         let n = diesel::update(account).set(account).execute(conn)?;
         Ok(n)
     }

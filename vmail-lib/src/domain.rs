@@ -1,10 +1,10 @@
 #![allow(proc_macro_derive_resolution_fallback)]
-use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
 use schema::domains;
 use std::fmt;
 
 use result::{Result, VmailError};
+use database::DatabaseConnection;
 
 #[derive(Queryable, PartialEq, Debug)]
 pub struct Domain {
@@ -25,14 +25,14 @@ impl fmt::Display for Domain {
 }
 
 impl Domain {
-    pub fn all(conn: &MysqlConnection) -> Result<Vec<Domain>> {
+    pub fn all(conn: &DatabaseConnection) -> Result<Vec<Domain>> {
         use schema::domains::dsl::*;
 
         let r = domains.load::<Domain>(conn)?;
         Ok(r)
     }
 
-    pub fn get(conn: &MysqlConnection, name: &str) -> Result<Domain> {
+    pub fn get(conn: &DatabaseConnection, name: &str) -> Result<Domain> {
         use schema::domains::dsl::*;
 
         let mut r = domains
@@ -47,7 +47,7 @@ impl Domain {
         bail!(VmailError::NotFound(format!("Domain {}", name)));
     }
 
-    pub fn exsits(conn: &MysqlConnection, name: &str) -> Result<bool> {
+    pub fn exsits(conn: &DatabaseConnection, name: &str) -> Result<bool> {
         use diesel::dsl::exists;
         use diesel::select;
         use schema::domains::dsl::*;
@@ -57,7 +57,7 @@ impl Domain {
     }
 
     /// returns number of rows inserted
-    pub fn create(conn: &MysqlConnection, domain: NewDomain) -> Result<usize> {
+    pub fn create(conn: &DatabaseConnection, domain: NewDomain) -> Result<usize> {
         use diesel::insert_into;
         use schema::domains;
 
@@ -66,7 +66,7 @@ impl Domain {
     }
 
     /// returns number of rows deleted
-    pub fn delete(conn: &MysqlConnection, d: &Domain) -> Result<usize> {
+    pub fn delete(conn: &DatabaseConnection, d: &Domain) -> Result<usize> {
         use diesel::delete;
         use schema::domains::dsl::*;
 

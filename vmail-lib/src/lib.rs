@@ -8,12 +8,13 @@ extern crate failure;
 #[macro_use]
 extern crate failure_derive;
 
-use diesel::connection::Connection;
-use diesel::mysql::MysqlConnection;
 use dotenv::dotenv;
 use std::env;
+use database::connect;
+pub use database::DatabaseConnection;
 
 pub mod result;
+mod database;
 
 pub mod account;
 pub mod alias;
@@ -21,13 +22,10 @@ pub mod domain;
 pub mod schema;
 pub mod tlspolicy;
 
-pub type DatabaseConnection = MysqlConnection;
-
 pub fn establish_connection() -> DatabaseConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
 
-    DatabaseConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+    connect(&database_url)
 }
