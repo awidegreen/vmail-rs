@@ -6,22 +6,23 @@
 `vmail-rs` is a command line tool and libary for managing a mail-server database
 based on the great [HowTo](https://thomas-leister.de/en/mailserver-debian-stretch) ([german version](https://thomas-leister.de/mailserver-debian-stretch/))
 from [Thomas Leister](https://thomas-leister.de) written in Rust.
+Although the tutorial is using a MySQL/MariaDB database, this command line tool
+also supports postgres.
 
 ## Prerequisites
 
-Make sure you have a working setup as described in the tutorial as `vmail-rs`
-relies on the described database scheme (MySQL or MariaDB). That also includes
-that `libmysqlclient-dev` on ubuntu or the counter-part for other
-distributions is installed.
+Make sure you have a working mail setup as described in the tutorial.
+You also need C libraries for your database client. For ubuntu, this is
+the `libmysqlclient-dev` package (or `libpq-dev`, if you are using postgres).
 
 Further, as `vmail-rs` is written in Rust, you should have a working
-rustup/cargo setup.
-
+[rustup/cargo setup](https://rustup.rs/).
 
 # Installation
 
-vmail-rs contains the cli tools `vmail-cli`
-
+vmail-rs contains the cli tool `vmail-cli`. By default, MySQL/MariaDB is used.
+To enable postgres support, add `--features vmail-lib/postgres` to the
+following `cargo` commands.
 
 ## Install from github
 
@@ -36,6 +37,7 @@ Clone the repo and run
 ```
 cargo install
 ```
+
 or the release version
 
 ```
@@ -54,6 +56,10 @@ password).
 ```
 DATABASE_URL=mysql://vmail:vmailpassword@localhost/database_name
 ```
+
+If you are using postgres, a [key-value format](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING)
+may be used instead of an URL.
+
 Use the command help to get started.
 
 ```shell

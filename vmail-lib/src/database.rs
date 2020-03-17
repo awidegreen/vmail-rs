@@ -1,7 +1,10 @@
 use diesel::connection::Connection;
-use diesel::mysql::MysqlConnection;
 
-pub type DatabaseConnection = MysqlConnection;
+#[cfg(not(feature = "postgres"))]
+pub use diesel::mysql::MysqlConnection as DatabaseConnection;
+#[cfg(feature = "postgres")]
+pub use diesel::pg::PgConnection as DatabaseConnection;
+
 
 pub fn connect(database_url: &str) -> DatabaseConnection {
 
