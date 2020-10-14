@@ -17,6 +17,11 @@ travis-ci = { repository = "awidegreen/vmail-rs" }
 path = "src/main.rs"
 name = "vmail-cli"
 
+[features] 
+default = ["mysql"]
+postgres  = ["vmail-lib/postgres"]
+mysql  = ["vmail-lib/mysql"]
+
 [dependencies]
 dotenv = "0.15.0"
 clap = "2.33.*"
