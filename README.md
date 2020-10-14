@@ -21,26 +21,30 @@ Further, as `vmail-rs` is written in Rust, you should have a working
 # Installation
 
 vmail-rs contains the cli tool `vmail-cli`. By default, MySQL/MariaDB is used.
-To enable postgres support, add `--features vmail-lib/postgres` to the
+To enable postgres support, add `--features postgres` to the
 following `cargo` commands.
 
 ## Install from github
 
-```
+```sh
+# default mysql [default]
 cargo install --git https://github.com/awidegreen/vmail-rs
+
+# use postgres
+cargo install --features postgres --git https://github.com/awidegreen/vmail-rs
 ```
 
 ## Build from sources
 
 Clone the repo and run
 
-```
+```sh
 cargo install
 ```
 
 or the release version
 
-```
+```sh
 cargo install --release
 ```
 
