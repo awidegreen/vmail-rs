@@ -8,6 +8,7 @@ homepage = "https://github.com/awidegreen/vmail-rs"
 repository = "https://github.com/awidegreen/vmail-rs"
 readme = "README.md"
 description = "A CLI client for vmail"
+edition = '2018'
 
 [badges]
 travis-ci = { repository = "awidegreen/vmail-rs" }
@@ -17,9 +18,9 @@ path = "src/main.rs"
 name = "vmail-cli"
 
 [dependencies]
-dotenv = "0.13.0"
-clap = "2.32.0"
-rpassword = "2.0.0"
+dotenv = "0.15.0"
+clap = "2.33.*"
+rpassword = "5.*"
 vmail-lib  = { path = "vmail-lib" }
 failure = "0.1.2"
 failure_derive = "0.1.2"

@@ -4,7 +4,7 @@ use vmail_lib::alias::Alias;
 use vmail_lib::result::Result;
 use vmail_lib::{establish_connection, DatabaseConnection};
 
-use utils;
+use crate::utils;
 
 //------------------------------------------------------------------------------
 

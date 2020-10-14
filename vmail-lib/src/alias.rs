@@ -159,9 +159,7 @@ impl Alias {
     }
 
     pub fn create(conn: &DatabaseConnection, alias: &NewAlias) -> Result<usize> {
-        use diesel;
         use diesel::insert_into;
-        use schema::aliases;
 
         match insert_into(aliases::table).values(alias).execute(conn) {
             Err(diesel::result::Error::DatabaseError(e, d)) => match e {

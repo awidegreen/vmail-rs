@@ -1,11 +1,11 @@
+use crate::result::Result;
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
-use result::Result;
 use vmail_lib::account::Account;
 use vmail_lib::alias::Alias;
 use vmail_lib::domain::{Domain, NewDomain};
 use vmail_lib::{establish_connection, DatabaseConnection};
 
-use utils;
+use crate::utils;
 
 //------------------------------------------------------------------------------
 

@@ -59,7 +59,6 @@ impl Domain {
     /// returns number of rows inserted
     pub fn create(conn: &DatabaseConnection, domain: NewDomain) -> Result<usize> {
         use diesel::insert_into;
-        use schema::domains;
 
         let n = insert_into(domains::table).values(&domain).execute(conn)?;
         Ok(n)

@@ -5,8 +5,8 @@ use domain::Domain;
 use schema::accounts;
 use std::fmt;
 
-use result::{Result, VmailError};
 use database::DatabaseConnection;
+use result::{Result, VmailError};
 
 #[derive(Identifiable, AsChangeset, Queryable, PartialEq, Debug)]
 pub struct Account {
@@ -115,8 +115,6 @@ impl Account {
 
     /// returns number of rows inserted
     pub fn create(conn: &DatabaseConnection, account: NewAccount) -> Result<usize> {
-        use schema::accounts;
-
         let n = diesel::insert_into(accounts::table)
             .values(account)
             .execute(conn)?;
@@ -140,7 +138,8 @@ impl Account {
             accounts
                 .filter(username.eq(name))
                 .filter(domain.eq(domain_name)),
-        )).get_result(conn);
+        ))
+        .get_result(conn);
         if let Ok(v) = r {
             v
         } else {

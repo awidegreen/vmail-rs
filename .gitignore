@@ -1,3 +1,4 @@
 /target
+vmail-lib/target
 **/*.rs.bk
 .env

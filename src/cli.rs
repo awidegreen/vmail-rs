@@ -1,8 +1,8 @@
 use clap::{App, AppSettings, Arg, SubCommand};
 
-use cmd::alias;
-use cmd::domain;
-use cmd::user;
+use crate::cmd::alias;
+use crate::cmd::domain;
+use crate::cmd::user;
 
 pub fn build_cli() -> App<'static, 'static> {
     App::new("vmail-cli")

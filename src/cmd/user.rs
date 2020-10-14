@@ -1,5 +1,5 @@
+use crate::crypt::{hash, PasswordScheme};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
-use crypt::{hash, PasswordScheme};
 use dotenv::dotenv;
 use rpassword;
 use std::env;
@@ -10,7 +10,7 @@ use vmail_lib::domain::Domain;
 use vmail_lib::result::Result;
 use vmail_lib::{establish_connection, DatabaseConnection};
 
-use utils;
+use crate::utils;
 
 const DOMAIN_MISSING: &'static str =
     "A domain has to be provided via user command (arg '-d|--domain') or via '.env' file";
