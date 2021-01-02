@@ -1,6 +1,11 @@
 name: Release and publish
 
-on: push
+on: 
+  push:
+    branches:
+      - "!*"
+    tags:
+      - "v*"
 
 jobs:
   build:
