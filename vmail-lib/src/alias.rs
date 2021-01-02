@@ -34,10 +34,7 @@ impl fmt::Display for Alias {
             Some(v) => v,
             _ => false,
         };
-        let username = match self.source_username {
-            Some(ref u) => u,
-            None => "%",
-        };
+        let username = self.source_username.as_deref().unwrap_or("%");
 
         write!(
             f,
@@ -69,12 +66,12 @@ impl NewAlias {
         self
     }
 
-    pub fn to_domain(mut self, domain: &str) -> Self {
+    pub fn target_domain(mut self, domain: &str) -> Self {
         self.destination_domain = String::from(domain);
         self
     }
 
-    pub fn to_user(mut self, username: &str) -> Self {
+    pub fn target_user(mut self, username: &str) -> Self {
         self.destination_username = String::from(username);
         self
     }
@@ -87,18 +84,14 @@ impl NewAlias {
 
 impl Alias {
     pub fn source_username(&self) -> String {
-        let s = match self.source_username {
-            Some(ref u) => u,
-            None => "%",
-        };
-        String::from(s)
+        self.source_username.as_deref().unwrap_or("%").to_string()
     }
 
     pub fn with_address(username: &str, domain: &str) -> NewAlias {
-        Alias::new().domain(domain).name(username)
+        Alias::new_alias().domain(domain).name(username)
     }
 
-    pub fn new() -> NewAlias {
+    pub fn new_alias() -> NewAlias {
         NewAlias {
             source_username: Some(String::new()),
             source_domain: String::new(),

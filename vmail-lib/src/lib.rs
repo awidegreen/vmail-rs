@@ -8,13 +8,13 @@ extern crate failure;
 #[macro_use]
 extern crate failure_derive;
 
-use dotenv::dotenv;
-use std::env;
 use database::connect;
 pub use database::DatabaseConnection;
+use dotenv::dotenv;
+use std::env;
 
-pub mod result;
 mod database;
+pub mod result;
 
 pub mod account;
 pub mod alias;

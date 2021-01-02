@@ -36,7 +36,7 @@ fn add(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
     let name = matches.value_of("USER").unwrap();
     let domain = matches.value_of("DOMAIN").unwrap();
     let dest_name = matches.value_of("DEST_USER").unwrap();
-    let dest_domain = matches.value_of("DEST_DOMAIN").unwrap_or_else(|| domain);
+    let dest_domain = matches.value_of("DEST_DOMAIN").unwrap_or(domain);
 
     if Account::exsits(&conn, name, domain) {
         return Err(format_err!(
@@ -46,21 +46,21 @@ fn add(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
         ));
     }
 
-    if !Account::exsits(&conn, dest_name, dest_domain) {
-        if !Alias::exsits(&conn, dest_name, dest_domain) {
-            return Err(format_err!(
+    if !Account::exsits(&conn, dest_name, dest_domain)
+        && !Alias::exsits(&conn, dest_name, dest_domain)
+    {
+        return Err(format_err!(
                 "Unable to add alias '{}@{}' as destination '{}@{}' does not exists as user account nor as an existing alias!",
                 name,
                 domain,
                 dest_name,
                 dest_domain,
-            ));
-        }
+                ));
     }
 
     let a = Alias::with_address(name, domain)
-        .to_domain(dest_domain)
-        .to_user(dest_name)
+        .target_domain(dest_domain)
+        .target_user(dest_name)
         .enable(enabled);
 
     Alias::create(&conn, &a)?;

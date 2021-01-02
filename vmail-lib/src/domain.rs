@@ -3,8 +3,8 @@ use diesel::prelude::*;
 use schema::domains;
 use std::fmt;
 
-use result::{Result, VmailError};
 use database::DatabaseConnection;
+use result::{Result, VmailError};
 
 #[derive(Queryable, PartialEq, Debug)]
 pub struct Domain {
