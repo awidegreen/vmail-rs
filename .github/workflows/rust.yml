@@ -9,6 +9,8 @@ on:
       - '**'
     paths-ignore:
       - README.md
+      - .github/workflows/release.yml
+      - .github/workflows/audit.yml
 
 env:
   CARGO_INCREMENTAL: 0
