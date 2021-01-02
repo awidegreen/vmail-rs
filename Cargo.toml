@@ -30,7 +30,7 @@ vmail-lib  = { path = "vmail-lib" }
 failure = "0.1.2"
 failure_derive = "0.1.2"
 rand = "0.5.5"
-sha-crypt = { git = "https://github.com/awidegreen/password-hashing.git",  branch = "add_sha-crypt", features = ["include_simple"] }
+sha-crypt = { version = "0.1.0", features = ["include_simple"] }
 
 [workspace]
 members = [
