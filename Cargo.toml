@@ -10,9 +10,6 @@ readme = "README.md"
 description = "A CLI client for vmail"
 edition = '2018'
 
-[badges]
-travis-ci = { repository = "awidegreen/vmail-rs" }
-
 [[bin]]
 path = "src/main.rs"
 name = "vmail-cli"

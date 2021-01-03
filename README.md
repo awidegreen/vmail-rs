@@ -1,5 +1,6 @@
 # vmail-rs
 
+[![Build status](https://github.com/awidegreen/vmail-rs/workflows/ci/badge.svg)](https://github.com/awidegreen/vmail-rs/actions)
 [![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://www.isc.org/downloads/software-support-policy/isc-license/)
 
 `vmail-rs` is a command line tool and libary for managing a mail-server database
