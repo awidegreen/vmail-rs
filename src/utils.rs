@@ -1,5 +1,5 @@
-use std::io::prelude::*;
 use std::io;
+use std::io::prelude::*;
 
 #[derive(Debug, PartialEq)]
 pub enum YesNoAnswer {

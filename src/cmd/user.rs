@@ -1,7 +1,6 @@
 use crate::crypt::{hash, PasswordScheme};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use dotenv::dotenv;
-use rpassword;
 use std::env;
 use std::process;
 use vmail_lib::account::{Account, NewAccount};
@@ -12,7 +11,7 @@ use vmail_lib::{establish_connection, DatabaseConnection};
 
 use crate::utils;
 
-const DOMAIN_MISSING: &'static str =
+const DOMAIN_MISSING: &str =
     "A domain has to be provided via user command (arg '-d|--domain') or via '.env' file";
 
 fn query_for_password() -> Option<String> {
@@ -56,7 +55,7 @@ fn show(matches: &ArgMatches, conn: DatabaseConnection, domain: Option<&str>) ->
                 }
             }
         }
-        println!("");
+        println!();
     }
 
     Ok(())
@@ -196,7 +195,7 @@ pub fn dispatch(matches: &ArgMatches) -> Result<()> {
     dotenv().ok();
 
     let default_domain = env::var("DEFAULT_DOMAIN");
-    let mut domain = if let Some(domain) = default_domain.as_ref().ok() {
+    let mut domain = if let Ok(domain) = default_domain.as_ref() {
         Some(domain.as_str())
     } else {
         None
