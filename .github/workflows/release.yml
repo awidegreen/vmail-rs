@@ -6,6 +6,11 @@ on:
       - "!*"
     tags:
       - "v*"
+    paths-ignore:
+      - README.md
+      - CHANGELOG.md
+      - .github/workflows/audit.yml
+      - .github/workflows/rust.yml
 
 jobs:
   build:
