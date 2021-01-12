@@ -1,12 +1,4 @@
-#[macro_use]
-extern crate clap;
-extern crate rpassword;
-extern crate vmail_lib;
-#[macro_use]
-extern crate failure;
-extern crate dotenv;
-extern crate sha_crypt;
-
+use failure::format_err;
 use std::io;
 use std::process;
 

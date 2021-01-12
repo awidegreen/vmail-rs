@@ -1,6 +1,7 @@
 use crate::crypt::{hash, PasswordScheme};
-use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
+use clap::{value_t, App, AppSettings, Arg, ArgMatches, SubCommand};
 use dotenv::dotenv;
+use failure::format_err;
 use std::env;
 use std::process;
 use vmail_lib::account::{Account, NewAccount};
