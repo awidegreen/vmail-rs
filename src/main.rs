@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate diesel;
+
 use failure::format_err;
 use std::io;
 use std::process;
@@ -5,6 +8,7 @@ use std::process;
 mod cli;
 mod cmd;
 mod crypt;
+mod db;
 mod result;
 mod utils;
 

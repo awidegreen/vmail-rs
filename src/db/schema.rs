@@ -1,5 +1,5 @@
 #![allow(proc_macro_derive_resolution_fallback)]
-use tlspolicy::PolicyEnumMapping;
+use super::tlspolicy::PolicyEnumMapping;
 
 table! {
     accounts (id) {

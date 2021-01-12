@@ -1,12 +1,15 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 
-use account::Account;
+use super::account::Account;
+use super::schema::aliases;
 use diesel::prelude::*;
-use schema::aliases;
+use diesel::{Insertable, Queryable};
 use std::fmt;
 
-use database::DatabaseConnection;
-use result::{Result, VmailError};
+use failure::{bail, format_err};
+
+use super::database::DatabaseConnection;
+use super::result::{Result, VmailError};
 
 #[derive(Queryable, PartialEq, Debug)]
 pub struct Alias {
@@ -102,7 +105,7 @@ impl Alias {
     }
 
     pub fn get(conn: &DatabaseConnection, name: &str, domain: &str) -> Result<Vec<Alias>> {
-        use schema::aliases::dsl::*;
+        use super::schema::aliases::dsl::*;
 
         let r = if name == "%" {
             aliases
@@ -119,14 +122,14 @@ impl Alias {
     }
 
     pub fn all(conn: &DatabaseConnection) -> Result<Vec<Alias>> {
-        use schema::aliases::dsl::*;
+        use super::schema::aliases::dsl::*;
 
         let r = aliases.load::<Alias>(conn)?;
         Ok(r)
     }
 
     pub fn all_by_dest_account(conn: &DatabaseConnection, account: &Account) -> Result<Vec<Alias>> {
-        use schema::aliases::dsl::*;
+        use super::schema::aliases::dsl::*;
 
         let r = aliases
             .filter(destination_username.eq(&account.username))
@@ -144,8 +147,8 @@ impl Alias {
     }
 
     pub fn delete(conn: &DatabaseConnection, alias: &Alias) -> Result<usize> {
+        use super::schema::aliases::dsl::*;
         use diesel::delete;
-        use schema::aliases::dsl::*;
 
         let n = delete(aliases.find(alias.id)).execute(conn)?;
         Ok(n)
@@ -171,9 +174,9 @@ impl Alias {
     }
 
     pub fn exsits(conn: &DatabaseConnection, name: &str, domain_name: &str) -> bool {
+        use super::schema::aliases::dsl::*;
         use diesel::dsl::exists;
         use diesel::select;
-        use schema::aliases::dsl::*;
 
         let r = select(exists(
             aliases

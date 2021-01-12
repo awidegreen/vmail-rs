@@ -1,11 +1,8 @@
-use diesel;
-use failure::Error;
+use failure::{Error, Fail};
 use std::result;
 
 #[derive(Debug, Fail)]
 pub enum VmailError {
-    #[fail(display = "Diesel Error: {}", _0)]
-    DieselError(#[cause] diesel::result::Error),
     #[fail(display = "Entry not found: {}", _0)]
     NotFound(String),
 }
