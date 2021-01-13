@@ -1,6 +1,6 @@
 [package]
 name = "vmail-rs"
-version = "0.3.1"
+version = "0.4.0"
 authors = [ "Armin Widegreen <vmail@widegreen.net>"]
 license = "BSD-3-Clause"
 documentation = "https://github.com/awidegreen/vmail-rs"

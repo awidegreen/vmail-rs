@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2021-01-13
+### Changed
+- Merge vmail-lib into main package
+- Bump dependencies
+
 ## [0.3.1] - 2021-01-03
 ### Changed
 - sha-crypt to official release version (0.1.0)
