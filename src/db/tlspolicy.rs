@@ -1,6 +1,9 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 use super::schema::tlspolicies;
 
+use diesel::{Insertable, Queryable};
+use diesel_derive_enum::DbEnum;
+
 #[derive(DbEnum, Debug, PartialEq)]
 pub enum PolicyEnum {
     None,

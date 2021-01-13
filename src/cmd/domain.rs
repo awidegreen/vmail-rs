@@ -1,10 +1,10 @@
+use crate::db::account::Account;
+use crate::db::alias::Alias;
+use crate::db::domain::{Domain, NewDomain};
+use crate::db::{establish_connection, DatabaseConnection};
 use crate::result::Result;
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use failure::format_err;
-use vmail_lib::account::Account;
-use vmail_lib::alias::Alias;
-use vmail_lib::domain::{Domain, NewDomain};
-use vmail_lib::{establish_connection, DatabaseConnection};
 
 use crate::utils;
 

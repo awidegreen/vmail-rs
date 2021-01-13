@@ -1,10 +1,14 @@
 #![allow(proc_macro_derive_resolution_fallback)]
+use super::schema::domains;
 use diesel::prelude::*;
-use schema::domains;
 use std::fmt;
 
-use database::DatabaseConnection;
-use result::{Result, VmailError};
+use super::database::DatabaseConnection;
+use super::result::{Result, VmailError};
+
+use diesel::{Insertable, Queryable};
+
+use failure::bail;
 
 #[derive(Queryable, PartialEq, Debug)]
 pub struct Domain {
@@ -26,14 +30,14 @@ impl fmt::Display for Domain {
 
 impl Domain {
     pub fn all(conn: &DatabaseConnection) -> Result<Vec<Domain>> {
-        use schema::domains::dsl::*;
+        use super::schema::domains::dsl::*;
 
         let r = domains.load::<Domain>(conn)?;
         Ok(r)
     }
 
     pub fn get(conn: &DatabaseConnection, name: &str) -> Result<Domain> {
-        use schema::domains::dsl::*;
+        use super::schema::domains::dsl::*;
 
         let mut r = domains
             .filter(domain.eq(name))
@@ -48,9 +52,9 @@ impl Domain {
     }
 
     pub fn exsits(conn: &DatabaseConnection, name: &str) -> Result<bool> {
+        use super::schema::domains::dsl::*;
         use diesel::dsl::exists;
         use diesel::select;
-        use schema::domains::dsl::*;
 
         let r = select(exists(domains.filter(domain.eq(name)))).get_result(conn)?;
         Ok(r)
@@ -66,8 +70,8 @@ impl Domain {
 
     /// returns number of rows deleted
     pub fn delete(conn: &DatabaseConnection, d: &Domain) -> Result<usize> {
+        use super::schema::domains::dsl::*;
         use diesel::delete;
-        use schema::domains::dsl::*;
 
         let n = delete(domains.find(d.id)).execute(conn)?;
         Ok(n)

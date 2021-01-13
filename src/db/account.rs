@@ -1,12 +1,15 @@
 #![allow(proc_macro_derive_resolution_fallback)]
-use diesel;
+use super::domain::Domain;
+use super::schema::accounts;
 use diesel::prelude::*;
-use domain::Domain;
-use schema::accounts;
 use std::fmt;
 
-use database::DatabaseConnection;
-use result::{Result, VmailError};
+use super::database::DatabaseConnection;
+use super::result::{Result, VmailError};
+
+use diesel::{AsChangeset, Identifiable, Insertable, Queryable};
+
+use failure::bail;
 
 #[derive(Identifiable, AsChangeset, Queryable, PartialEq, Debug)]
 pub struct Account {
@@ -57,7 +60,7 @@ impl fmt::Display for Account {
 
 impl Account {
     pub fn get(conn: &DatabaseConnection, name: &str, domain_: &str) -> Result<Account> {
-        use schema::accounts::dsl::*;
+        use super::schema::accounts::dsl::*;
 
         let mut r = accounts
             .filter(username.eq(name))
@@ -76,7 +79,7 @@ impl Account {
     }
 
     pub fn all_by_username(conn: &DatabaseConnection, name: &str) -> Result<Vec<Account>> {
-        use schema::accounts::dsl::*;
+        use super::schema::accounts::dsl::*;
 
         let r = accounts
             .filter(username.eq(name))
@@ -91,7 +94,7 @@ impl Account {
     }
 
     pub fn all_by_domain(conn: &DatabaseConnection, d: &Domain) -> Result<Vec<Account>> {
-        use schema::accounts::dsl::*;
+        use super::schema::accounts::dsl::*;
 
         let r = accounts
             .filter(domain.eq(&d.domain))
@@ -108,7 +111,7 @@ impl Account {
     }
 
     pub fn all(conn: &DatabaseConnection) -> Result<Vec<Account>> {
-        use schema::accounts::dsl::*;
+        use super::schema::accounts::dsl::*;
         let r = accounts.load::<Account>(conn)?;
         Ok(r)
     }
@@ -123,16 +126,16 @@ impl Account {
 
     /// returns number of rows deleted
     pub fn delete(conn: &DatabaseConnection, account: &Account) -> Result<usize> {
-        use schema::accounts::dsl::*;
+        use super::schema::accounts::dsl::*;
 
         let n = diesel::delete(accounts.find(account.id)).execute(conn)?;
         Ok(n)
     }
 
     pub fn exsits(conn: &DatabaseConnection, name: &str, domain_name: &str) -> bool {
+        use super::schema::accounts::dsl::*;
         use diesel::dsl::exists;
         use diesel::select;
-        use schema::accounts::dsl::*;
 
         let r = select(exists(
             accounts

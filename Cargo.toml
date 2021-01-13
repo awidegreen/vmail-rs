@@ -16,19 +16,17 @@ name = "vmail-cli"
 
 [features] 
 default = ["mysql"]
-postgres  = ["vmail-lib/postgres"]
-mysql  = ["vmail-lib/mysql"]
+mysql = ["diesel/mysql", "diesel-derive-enum/mysql"]
+# Thomas Leistner's tutorial is using mysql, so this is the default database
+# backend. Build with `--features postgres` for postgres support.
+postgres = ["diesel/postgres", "diesel-derive-enum/postgres"]
 
 [dependencies]
 dotenv = "0.15.0"
 clap = "2.33.*"
 rpassword = "5.*"
-vmail-lib  = { path = "vmail-lib", version = "0.2" }
 failure = "0.1"
 failure_derive = "0.1"
 sha-crypt = { version = "0.1.0", features = ["include_simple"] }
-
-[workspace]
-members = [
-  "vmail-lib",
-]
+diesel = { version = "1.4"}
+diesel-derive-enum = { version = "1.1"}

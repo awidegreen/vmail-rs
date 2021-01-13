@@ -1,14 +1,14 @@
 use crate::crypt::{hash, PasswordScheme};
+use crate::db::account::{Account, NewAccount};
+use crate::db::alias::Alias;
+use crate::db::domain::Domain;
+use crate::db::result::Result;
+use crate::db::{establish_connection, DatabaseConnection};
 use clap::{value_t, App, AppSettings, Arg, ArgMatches, SubCommand};
 use dotenv::dotenv;
 use failure::format_err;
 use std::env;
 use std::process;
-use vmail_lib::account::{Account, NewAccount};
-use vmail_lib::alias::Alias;
-use vmail_lib::domain::Domain;
-use vmail_lib::result::Result;
-use vmail_lib::{establish_connection, DatabaseConnection};
 
 use crate::utils;
 
