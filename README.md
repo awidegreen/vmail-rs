@@ -1,9 +1,10 @@
 # vmail-rs
 
 [![Build status](https://github.com/awidegreen/vmail-rs/workflows/ci/badge.svg)](https://github.com/awidegreen/vmail-rs/actions)
-[![license](https://img.shields.io/badge/license-ISC-brightgreen.svg)](https://www.isc.org/downloads/software-support-policy/isc-license/)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/vmail-rs.svg)](https://crates.io/crates/vmail-rs)
 
-`vmail-rs` is a command line tool and libary for managing a mail-server database
+`vmail-rs` is a command line tool for managing a mail-server database
 based on the great [HowTo](https://thomas-leister.de/en/mailserver-debian-stretch) ([german version](https://thomas-leister.de/mailserver-debian-stretch/))
 from [Thomas Leister](https://thomas-leister.de) written in Rust.
 Although the tutorial is using a MySQL/MariaDB database, this command line tool
@@ -24,14 +25,22 @@ vmail-rs contains the cli tool `vmail-cli`. By default, MySQL/MariaDB is used.
 To enable postgres support, add `--features postgres` to the
 following `cargo` commands.
 
-## Install from github
+## From crates.io
+
+Install `vmail-rs` via `cargo`.
+
+```sh
+> cargo install vmail-rs
+```
+
+## From github
 
 ```sh
 # default mysql [default]
-cargo install --git https://github.com/awidegreen/vmail-rs
+> cargo install --git https://github.com/awidegreen/vmail-rs
 
 # use postgres
-cargo install --features postgres --git https://github.com/awidegreen/vmail-rs
+> cargo install --features postgres --git https://github.com/awidegreen/vmail-rs
 ```
 
 ## Build from sources
@@ -39,13 +48,13 @@ cargo install --features postgres --git https://github.com/awidegreen/vmail-rs
 Clone the repo and run
 
 ```sh
-cargo install
+> cargo install
 ```
 
 or the release version
 
 ```sh
-cargo install --release
+> cargo install --release
 ```
 
 # Usage
@@ -197,6 +206,6 @@ very welcomed.
 
 # License
 
-Copyright (C) 2018 by Armin Widegreen
+Copyright (C) 2021 by Armin Widegreen
 
-This is free software, licensed under the [ISC License](LICENSE).
+This is free software, licensed under The [BSD-3-Clause](LICENSE).

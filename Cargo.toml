@@ -2,12 +2,12 @@
 name = "vmail-rs"
 version = "0.3.1"
 authors = [ "Armin Widegreen <vmail@widegreen.net>"]
-license = "ISC"
+license = "BSD-3-Clause"
 documentation = "https://github.com/awidegreen/vmail-rs"
 homepage = "https://github.com/awidegreen/vmail-rs"
 repository = "https://github.com/awidegreen/vmail-rs"
 readme = "README.md"
-description = "A CLI client for vmail"
+description = "A CLI client for vmail (mailserver setup with Dovecot, Postfix, MySQL, Rspamd)"
 edition = '2018'
 
 [[bin]]
