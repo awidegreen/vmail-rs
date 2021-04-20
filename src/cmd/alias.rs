@@ -34,6 +34,7 @@ fn show(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
 
 fn add(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
     let enabled = !matches.is_present("disabled");
+    let forward = matches.is_present("forward");
     let name = matches.value_of("USER").unwrap();
     let domain = matches.value_of("DOMAIN").unwrap();
     let dest_name = matches.value_of("DEST_USER").unwrap();
@@ -47,7 +48,8 @@ fn add(matches: &ArgMatches, conn: DatabaseConnection) -> Result<()> {
         ));
     }
 
-    if !Account::exsits(&conn, dest_name, dest_domain)
+    if !forward
+        && !Account::exsits(&conn, dest_name, dest_domain)
         && !Alias::exsits(&conn, dest_name, dest_domain)
     {
         return Err(format_err!(
@@ -172,6 +174,12 @@ pub fn get_subcommand() -> App<'static, 'static> {
                         .long("disabled")
                         .short("d")
                         .help("Set alias to disabled"),
+                )
+                .arg(
+                    Arg::with_name("forward")
+                        .long("forward")
+                        .short("f")
+                        .help("Allow alias to external domain"),
                 ),
         )
         .subcommand(
